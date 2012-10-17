@@ -1,0 +1,10 @@
+Directory passed in
+
+iterate -> collect File names, times, links(sym), D, E, dir, #links
+
+index -> file names
+
+word distance -> file names (library)
+
+Evaluate -> files/links/names
+

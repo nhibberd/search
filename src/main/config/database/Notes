@@ -1,0 +1,11 @@
+Now, in the VersionOne case, add 1 extra statement which inserts '1' into the SCHEMA_VERSION table
+Now you can run up safely.
+Ok, you then need to make a db change.
+To make a change you create a class PatchOneToTwo
+In this you would put, what ever create table/alter table statements you need to update your database assuming the existance of a version 1 db
+and of course 1 extra statement that replaces the SCHEMA_VERSION row with the value 2.
+At this point you will need to change your startup code.
+You would:
+1. If no DB exists, create it using VersionOne, then upgrade it with PatchOneToTwo.
+2. If DB exists, and SCHEMA_VERSION = 1, then upgrade it with PatchOneToTwo
+3. If DB exists, and SCHEMA_VERSION = 2, then do nothing
