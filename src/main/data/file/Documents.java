@@ -45,6 +45,27 @@ public class Documents {
         this.owner = owner;
         this.permissions = permissions;
     }
+
+
+    public boolean compare(Documents documents) {
+        if (hidden != documents.hidden) return false;
+        if (other != documents.other) return false;
+        if (regfile != documents.regfile) return false;
+        if (ext != null ? !ext.equals(documents.ext) : documents.ext != null) return false;
+        if (group != null ? !group.equals(documents.group) : documents.group != null) return false;
+        if (links != null ? !links.equals(documents.links) : documents.links != null) return false;
+        if (name != null ? !name.equals(documents.name) : documents.name != null) return false;
+        if (owner != null ? !owner.equals(documents.owner) : documents.owner != null) return false;
+        if (permissions != null ? !permissions.equals(documents.permissions) : documents.permissions != null)
+            return false;
+        if (times.atime != 0 ? times.atime != documents.times.atime : documents.times.atime != 0) return false;
+        if (times.mtime != 0 ? times.mtime != documents.times.mtime : documents.times.mtime != 0) return false;
+        if (times.ctime != 0 ? times.ctime != documents.times.ctime : documents.times.ctime != 0) return false;
+        if (url != null ? !url.equals(documents.url) : documents.url != null) return false;
+
+        return true;
+    }
+
 }
 
 

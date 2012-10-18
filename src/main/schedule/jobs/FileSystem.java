@@ -6,6 +6,7 @@ import main.data.error.ServerException;
 import main.data.file.AllFiles;
 import main.data.file.Date;
 import main.data.file.Documents;
+import main.data.file.Links;
 import main.service.file.FileDb;
 import main.service.file.LinksDb;
 import main.tool.Base64;
@@ -43,8 +44,8 @@ public class FileSystem implements Runnable {
     //todo check if file has links to it ( or dir )
 
     public void run() {
-        final AllFiles files = list(new File("/home/dev/nick/"));
-        System.out.println("files.size() = " + files.size());
+        final AllFiles files = list(new File("/home/dev/nick/notes"));
+        System.out.println("size = " + files.size());
 
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
@@ -63,7 +64,16 @@ public class FileSystem implements Runnable {
                 database.insert(connection,doc);
                 break;
             }
+
             Documents dbdoc = database.get(connection, doc.url);
+
+            //works
+            if (doc.compare(dbdoc)){
+                System.out.println("equals");
+            } else {
+                System.out.println("don't equals");
+            }
+            
 
         }
         //todo check if files have changed
@@ -80,12 +90,22 @@ public class FileSystem implements Runnable {
     }
     
     private void evalLinks(Connection connection, List<Path> links){
+        // working
         LinksDb database = new LinksDb();
         for (Path link : links) {
-            System.out.println("link.toFile().getName() = " + link.toFile().getName());
+            String test;
+            try {
+                test = Files.readSymbolicLink(link).toFile().getAbsolutePath();
+            } catch (IOException e) {
+                throw new ServerException(e);
+            }
+            if (database.exists(connection,test) == Status.OK){
+                    database.insert(connection,new Links(test,0));
+            }
         }
-        //todo check db | add to db
 
+
+        //todo check db | add to db
     }
 
 

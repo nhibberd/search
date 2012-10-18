@@ -36,7 +36,7 @@ public class Search {
 
         //threads
         Threads threads = new Threads();
-        threads.add(new main.schedule.jobs.FileSystem(), 1 * MINUTE);
+        threads.add(new main.schedule.jobs.FileSystem(), 10 * SECOND);
 
         try{
             for (;;) {}

@@ -12,4 +12,13 @@ public class Date {
         this.ctime = ctime;
         this.atime = atime;
     }
+
+    @Override
+    public String toString() {
+        return "Date{" +
+                "mtime=" + mtime +
+                ", ctime=" + ctime +
+                ", atime=" + atime +
+                '}';
+    }
 }
