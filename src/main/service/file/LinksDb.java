@@ -45,11 +45,12 @@ public class LinksDb {
     }
 
     public Links get (Connection connection, final String dir){
-        String sql = "SELECT * FROM \"SEARCH\".\"LINKS\"";
+        String sql = "SELECT * FROM \"SEARCH\".\"LINKS\" WHERE \"DIR\" = ?";
         return statement.withStatement(connection, sql, new Function<PreparedStatement, Links>() {
             public Links apply(PreparedStatement preparedStatement) {
                 Links r = null;
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                q.setString(1, dir);
                 EdgeResultSet z = new EdgeResultSet(q);
                 if (z.next()){
                     r = (new Links(z.getString(1),z.getInt(2)));

@@ -53,55 +53,64 @@ public class FileSystem implements Runnable {
                 evalLinks(connection, files.links);
             }
         });
-
-        //files.links
     }
 
     private void eval(Connection connection, List<Documents> docs) {
         FileDb database = new FileDb();
         for (Documents doc : docs) {
             if (database.exists(connection,doc.url) == Status.OK){
+                doc.hash = hash(doc.url);
                 database.insert(connection,doc);
                 break;
             }
-
             Documents dbdoc = database.get(connection, doc.url);
 
             //works
             if (doc.compare(dbdoc)){
                 System.out.println("equals");
+                //do nothing
             } else {
                 System.out.println("don't equals");
+                //find which has changed
+                    //add to new db table
+
+                //todo check if files have changed
+                // atime
+                // mtime
+                // hidden
+                // owner
+                // group
+                // permissions
+                // create hash + check db's hash
+                //todo store in new table if changes
             }
+
+
+            //todo check links (job) = dont need to do this anymore
             
 
         }
-        //todo check if files have changed
-        // atime
-        // mtime
-        // hidden
-        // owner
-        // group
-        // permissions
-        // create hash + check db's hash
-                    //todo store in new table if changes
-
-        //todo check links
     }
     
     private void evalLinks(Connection connection, List<Path> links){
         // working
         LinksDb database = new LinksDb();
         for (Path link : links) {
-            String test;
+            String dir;
             try {
-                test = Files.readSymbolicLink(link).toFile().getAbsolutePath();
+                dir = Files.readSymbolicLink(link).toFile().getAbsolutePath();
             } catch (IOException e) {
                 throw new ServerException(e);
             }
-            if (database.exists(connection,test) == Status.OK){
-                    database.insert(connection,new Links(test,0));
+            if (database.exists(connection,dir) == Status.OK){
+                    database.insert(connection,new Links(dir,0));
             }
+
+            Links dblink = database.get(connection, dir);
+            //stuff
+
+
+
         }
 
 

@@ -15,6 +15,7 @@ public class Documents {
     public String group;
     public String owner;
     public Integer permissions;
+    public String hash;
 
 
     public Documents(String name, String ext, Date times, String url, Integer links, boolean regfile, boolean other, boolean hidden, String group, String owner, Integer permissions) {
@@ -31,7 +32,7 @@ public class Documents {
         this.permissions = permissions;
     }
 
-    public Documents(Integer id, String name, String ext, Date times, String url, Integer links, boolean regfile, boolean other, boolean hidden, String group, String owner, Integer permissions) {
+    public Documents(Integer id, String name, String ext, Date times, String url, Integer links, boolean regfile, boolean other, boolean hidden, String group, String owner, Integer permissions, String hash) {
         this.id = id;
         this.name = name;
         this.ext = ext;
@@ -44,6 +45,7 @@ public class Documents {
         this.group = group;
         this.owner = owner;
         this.permissions = permissions;
+        this.hash = hash;
     }
 
 

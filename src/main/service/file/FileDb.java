@@ -33,7 +33,7 @@ public class FileDb {
 
     public Status insert(Connection connection, final Documents doc) {
         String sqlInsert = "INSERT INTO \"SEARCH\".\"FILE\"( NAME, EXT, MTIME, CTIME, ATIME, URL, LINKS, " +
-                "REGFILE, OTHER, HIDDEN, GROUPS, OWNER, PERMISSIONS ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "REGFILE, OTHER, HIDDEN, GROUPS, OWNER, PERMISSIONS, HASH ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return statement.withStatement(connection,sqlInsert, new Function<PreparedStatement, Status>() {
             public Status apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
@@ -50,6 +50,7 @@ public class FileDb {
                 q.setString(11, doc.group );
                 q.setString(12, doc.owner );
                 q.setInt(13, doc.permissions );
+                q.setString(14, doc.hash);
                 return checkrow(q.executeUpdate());
             }
         });
@@ -66,7 +67,7 @@ public class FileDb {
                 if (z.next()){
                     r = (new Documents(z.getInt(1),z.getString(2),z.getString(3),new Date(z.getLong(4),z.getLong(5),z.getLong(6)),
                             z.getString(7),z.getInt(8),z.getBoolean(9),z.getBoolean(10),z.getBoolean(11),z.getString(12),
-                            z.getString(13),z.getInt(14)));
+                            z.getString(13),z.getInt(14),z.getString(15)));
                 }
                 return r;
             }
