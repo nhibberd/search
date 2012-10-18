@@ -57,7 +57,7 @@ public class FileSystem implements Runnable {
         for (Path link : links) {
             System.out.println("link.toFile().getName() = " + link.toFile().getName());
         }
-        //todo add to db
+        //todo check db | add to db
 
     }
 

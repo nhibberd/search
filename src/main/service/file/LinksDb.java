@@ -7,7 +7,6 @@ import main.data.file.Documents;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
 
-import java.nio.file.attribute.FileTime;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.List;
 import static main.tool.CrapToMove.statement;
 import static main.tool.Validations.checkrownu;
 
-public class fileDb {
+public class LinksDb {
     public Status exists(Connection connection, final String input) {
         String sql = "SELECT * FROM \"SEARCH\".\"FILE\" WHERE \"URL\" = ? ";
         return statement.withStatement(connection,sql, new Function<PreparedStatement, Status>() {
