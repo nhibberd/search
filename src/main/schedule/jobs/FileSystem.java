@@ -1,64 +1,68 @@
 package main.schedule.jobs;
 
-import main.data.core.Function;
 import main.data.error.ServerException;
-import main.data.file.*;
-import main.db.EdgePreparedStatement;
-import main.db.EdgeResultSet;
+import main.data.file.Date;
+import main.data.file.Documents;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
-import java.security.MessageDigest;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.List;
-
-import static main.tool.Base64.byteToBase64;
-import static main.tool.CrapToMove.*;
+import java.util.Set;
 
 public class FileSystem implements Runnable {
 
 
+
+    //todo check if file is in db
+    //todo if it is, check times, check hash
+
+    //note execuatable updates access time
+
+
+    //todo check if file has links to it ( or dir )
+
     public void run() {
-        list(new File("echo"));
+        List<Documents> docs = list(new File("/home/dev/nick/"));
+        eval(docs);
     }
+
+    private void eval(List<Documents> docs) {
+        //todo check if files have changed
+        // atime
+        // mtime
+        // hidden
+        // owner
+        // group
+        // permissions
+
+        // create hash + check db's hash
+
+
+    }
+
 
     private List<Documents> list(File f) {
         List<Documents> r = new ArrayList<Documents>();
         try{
-            System.out.println("f.getAbsolutePath() = " + f.getAbsolutePath());
             if (f.canRead()){
                 if (f.isFile()) {
-                    String ext = getExt(f.getAbsolutePath());
+                    final String ext = getExt(f.getAbsolutePath());
                     Path file = Paths.get(f.getAbsolutePath());
                     BasicFileAttributes a = Files.readAttributes(file, BasicFileAttributes.class);
-                    System.out.println("a.lastAccessTime() = " + a.lastAccessTime().toMillis());
-                    System.out.println("a.lastModifiedTime() = " + a.lastModifiedTime().toMillis());
-                    System.out.println("a.creationTime() = " + a.creationTime().toMillis());
-                    System.out.println("a.isRegularFile() = " + a.isRegularFile());
-                    System.out.println("a.isOther() = " + a.isOther());
-                    System.out.println("f.canExecute() = " + f.canExecute());
-
                     PosixFileAttributes z = Files.readAttributes(file,PosixFileAttributes.class);
-                    System.out.println("z.group().getName() = " + z.group().getName());
-                    System.out.println("z.owner().getName() = " + z.owner().getName());
-                    System.out.println("z.permissions(). = " + z.permissions().);
-                    
-                    
-                    r.add(new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime(),a.creationTime(),a.lastAccessTime()),f.getAbsolutePath()));
+                    r.add(new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime(),
+                            a.creationTime(),a.lastAccessTime()),f.getAbsolutePath(),0/*links*/,a.isRegularFile(),
+                            a.isOther(),f.isHidden(),z.group().getName(),z.owner().getName(),getPermissions(z.permissions())));
                 } else {
                     for (File q : f.listFiles()){
-                        System.out.println("q = " + q);
-                            r.addAll(list(q));
+                        r.addAll(list(q));
                     }
                 }
             }
@@ -67,7 +71,32 @@ public class FileSystem implements Runnable {
         } catch (IOException e) {
             throw new ServerException(e);
         }
-        show(r);
+        //show(r);
+        return r;
+    }
+
+    private Integer getPermissions(Set<PosixFilePermission> permissions) {
+        Integer r = 0;
+        String s = permissions.toString();
+
+        if (s.contains("OWNER_WRITE"))
+            r+= 200;
+        if (s.contains("OWNER_READ"))
+            r+= 400;
+        if (s.contains("OWNER_EXECUTE"))
+            r+= 100;
+        if (s.contains("GROUP_WRITE"))
+            r+= 20;
+        if (s.contains("GROUP_READ"))
+            r+= 40;
+        if (s.contains("GROUP_EXECUTE"))
+            r+= 10;
+        if (s.contains("OTHERS_WRITE"))
+            r+= 2;
+        if (s.contains("OTHERS_READ"))
+            r+= 4;
+        if (s.contains("OTHERS_EXECUTE"))
+            r+= 1;
         return r;
     }
 
@@ -83,19 +112,7 @@ public class FileSystem implements Runnable {
     }
 
     private String trim(String path){
-        return (path.contains(".")) ? path.substring(0,path.lastIndexOf(".")) : "";
+        return (path.startsWith(".") ? path : ((path.contains(".")) ? path.substring(0,path.lastIndexOf(".")) : path));
     }
-
-    //todo check if file is in db
-    //todo if it is, check times, check hash
-
-        //note execuatable updates access time
-
-
-    //todo check if file has links to it ( or dir )
-
-
-
-
 
 }
