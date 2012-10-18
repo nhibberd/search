@@ -11,13 +11,11 @@ public class Validations {
         return (date.getTime() < (age + time));
     }
 
-
     public static Status checkrow(int i){
         if (i != 0)
             return Status.OK;
         else
             return Status.NOT_FOUND;
     }
-
 
 }

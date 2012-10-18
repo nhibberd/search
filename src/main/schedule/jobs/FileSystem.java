@@ -1,11 +1,18 @@
 package main.schedule.jobs;
 
+import main.data.core.Action;
+import main.data.core.Status;
 import main.data.error.ServerException;
 import main.data.file.AllFiles;
 import main.data.file.Date;
 import main.data.file.Documents;
+import main.service.file.FileDb;
+import main.service.file.LinksDb;
+import main.tool.Base64;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,10 +20,17 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
+import java.security.DigestException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import static main.tool.CrapToMove.connector;
+import static main.tool.CrapToMove.statement;
 
 public class FileSystem implements Runnable {
    
@@ -29,17 +43,28 @@ public class FileSystem implements Runnable {
     //todo check if file has links to it ( or dir )
 
     public void run() {
-        AllFiles files = list(new File("/home/dev/nick/"));
+        final AllFiles files = list(new File("/home/dev/nick/"));
         System.out.println("files.size() = " + files.size());
-        eval(files.docs);
-        evalLinks(files.links);
+
+        connector.withConnection(new Action<Connection>() {
+            public void apply(final Connection connection) {
+                eval(connection, files.docs);
+                evalLinks(connection, files.links);
+            }
+        });
 
         //files.links
     }
 
-    private void eval(List<Documents> docs) {
+    private void eval(Connection connection, List<Documents> docs) {
+        FileDb database = new FileDb();
         for (Documents doc : docs) {
-            //System.out.println("doc.name = " + doc.name);
+            if (database.exists(connection,doc.url) == Status.OK){
+                database.insert(connection,doc);
+                break;
+            }
+            Documents dbdoc = database.get(connection, doc.url);
+
         }
         //todo check if files have changed
         // atime
@@ -49,11 +74,13 @@ public class FileSystem implements Runnable {
         // group
         // permissions
         // create hash + check db's hash
+                    //todo store in new table if changes
 
         //todo check links
     }
     
-    private void evalLinks(List<Path> links){
+    private void evalLinks(Connection connection, List<Path> links){
+        LinksDb database = new LinksDb();
         for (Path link : links) {
             System.out.println("link.toFile().getName() = " + link.toFile().getName());
         }
@@ -81,6 +108,29 @@ public class FileSystem implements Runnable {
             for (File q : f.listFiles())
                 r = r.add(list(q, acc));
             return r;
+        }
+    }
+    
+    private String hash(String path){
+        try {
+            MessageDigest z = MessageDigest.getInstance("SHA1");
+            byte[] buffer = new byte[1024];
+            FileInputStream fis = new FileInputStream(new File(path));
+            try {
+                int length;
+                while ((length = fis.read(buffer)) >= 0)
+                    z.update(buffer, 0, length);
+            } finally {
+                fis.close();
+            }
+            byte[] result = z.digest();
+            return Base64.byteToBase64(result);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServerException(e);
+        } catch (FileNotFoundException e) {
+            throw new ServerException(e);
+        } catch (IOException e) {
+            throw new ServerException(e);
         }
     }
 

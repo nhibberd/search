@@ -30,24 +30,16 @@ public class Search {
         else
             ConfigSetup.set(new File("config.properties"));
 
-
-
         //db setup
         new VersionOne().setup();
         new Schema().apply();
 
+        //threads
         Threads threads = new Threads();
         threads.add(new main.schedule.jobs.FileSystem(), 1 * MINUTE);
 
-
-
-
         try{
-            //something
-            int i = 0;
-            for (;;){
-                i++;
-            }
+            for (;;) {}
 
 
         } finally {
