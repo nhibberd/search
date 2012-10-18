@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,18 +29,31 @@ public class FileSystem implements Runnable {
 
 
     public void run() {
-        list(new File("/Users/dev/intellij/"));
+        list(new File("echo"));
     }
 
     private List<Documents> list(File f) {
         List<Documents> r = new ArrayList<Documents>();
         try{
+            System.out.println("f.getAbsolutePath() = " + f.getAbsolutePath());
             if (f.canRead()){
                 if (f.isFile()) {
                     String ext = getExt(f.getAbsolutePath());
                     Path file = Paths.get(f.getAbsolutePath());
                     BasicFileAttributes a = Files.readAttributes(file, BasicFileAttributes.class);
+                    System.out.println("a.lastAccessTime() = " + a.lastAccessTime().toMillis());
+                    System.out.println("a.lastModifiedTime() = " + a.lastModifiedTime().toMillis());
                     System.out.println("a.creationTime() = " + a.creationTime().toMillis());
+                    System.out.println("a.isRegularFile() = " + a.isRegularFile());
+                    System.out.println("a.isOther() = " + a.isOther());
+                    System.out.println("f.canExecute() = " + f.canExecute());
+
+                    PosixFileAttributes z = Files.readAttributes(file,PosixFileAttributes.class);
+                    System.out.println("z.group().getName() = " + z.group().getName());
+                    System.out.println("z.owner().getName() = " + z.owner().getName());
+                    System.out.println("z.permissions(). = " + z.permissions().);
+                    
+                    
                     r.add(new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime(),a.creationTime(),a.lastAccessTime()),f.getAbsolutePath()));
                 } else {
                     for (File q : f.listFiles()){
@@ -71,6 +85,15 @@ public class FileSystem implements Runnable {
     private String trim(String path){
         return (path.contains(".")) ? path.substring(0,path.lastIndexOf(".")) : "";
     }
+
+    //todo check if file is in db
+    //todo if it is, check times, check hash
+
+        //note execuatable updates access time
+
+
+    //todo check if file has links to it ( or dir )
+
 
 
 
