@@ -106,8 +106,8 @@ public class FileSystem implements Runnable {
         } catch (IOException e) {
             throw new ServerException(e);
         }
-        return new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime(),
-                a.creationTime(),a.lastAccessTime()),file.toFile().getAbsolutePath(),0/*links*/,a.isRegularFile(),
+        return new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime().toMillis(),
+                a.creationTime().toMillis(),a.lastAccessTime().toMillis()),file.toFile().getAbsolutePath(),0/*links*/,a.isRegularFile(),
                 a.isOther(),file.toFile().isHidden(),z.group().getName(),z.owner().getName(),getPermissions(z.permissions()));
 
     }

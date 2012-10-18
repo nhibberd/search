@@ -3,11 +3,11 @@ package main.data.file;
 import java.nio.file.attribute.FileTime;
 
 public class Date {
-    public FileTime mtime;
-    public FileTime ctime;
-    public FileTime atime;
+    public long mtime;
+    public long ctime;
+    public long atime;
 
-    public Date(FileTime mtime, FileTime ctime, FileTime atime) {
+    public Date(long mtime, long ctime, long atime) {
         this.mtime = mtime;
         this.ctime = ctime;
         this.atime = atime;
