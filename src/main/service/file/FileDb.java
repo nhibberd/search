@@ -7,14 +7,13 @@ import main.data.file.Documents;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
 
-import java.nio.file.attribute.FileTime;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
 import static main.tool.CrapToMove.statement;
-import static main.tool.Validations.checkrownu;
+import static main.tool.Validations.checkrow;
 
 public class FileDb {
     public Status exists(Connection connection, final String input) {
@@ -32,7 +31,6 @@ public class FileDb {
         });
     }
 
-    //todo
     public Status insert(Connection connection, final Documents input) {
         String sqlInsert = "INSERT INTO \"SEARCH\".\"FILE\"( NAME, EXT, MTIME, CTIME, ATIME, URL, LINKS, " +
                 "REGFILE, OTHER, HIDDEN, GROUPS, OWNER, PERMISSIONS ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -52,13 +50,12 @@ public class FileDb {
                 q.setString(11, input.group );
                 q.setString(12, input.owner );
                 q.setInt(13, input.permissions );
-                return checkrownu(q.executeUpdate());
+                return checkrow(q.executeUpdate());
             }
         });
     }
 
-    //todo
-    private List<Documents> get (Connection connection){
+    public List<Documents> get (Connection connection){
         String sql = "SELECT * FROM \"SEARCH\".\"FILE\"";
         return statement.withStatement(connection, sql, new Function<PreparedStatement, List<Documents>>() {
             public List<Documents> apply(PreparedStatement preparedStatement) {
