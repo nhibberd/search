@@ -1,6 +1,7 @@
 package main.schedule.jobs;
 
 import main.data.error.ServerException;
+import main.data.file.AllFiles;
 import main.data.file.Date;
 import main.data.file.Documents;
 
@@ -13,13 +14,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public class FileSystem implements Runnable {
-
-
-
+   
     //todo check if file is in db
     //todo if it is, check times, check hash
 
@@ -29,11 +29,18 @@ public class FileSystem implements Runnable {
     //todo check if file has links to it ( or dir )
 
     public void run() {
-        List<Documents> docs = list(new File("/home/dev/nick/"));
-        eval(docs);
+        AllFiles files = list(new File("/home/dev/nick/"));
+        System.out.println("files.size() = " + files.size());
+        eval(files.docs);
+        evalLinks(files.links);
+
+        //files.links
     }
 
     private void eval(List<Documents> docs) {
+        for (Documents doc : docs) {
+            //System.out.println("doc.name = " + doc.name);
+        }
         //todo check if files have changed
         // atime
         // mtime
@@ -41,39 +48,70 @@ public class FileSystem implements Runnable {
         // owner
         // group
         // permissions
-
         // create hash + check db's hash
 
+        //todo check links
+    }
+    
+    private void evalLinks(List<Path> links){
+        for (Path link : links) {
+            System.out.println("link.toFile().getName() = " + link.toFile().getName());
+        }
+        //todo add to db
 
     }
 
 
-    private List<Documents> list(File f) {
-        List<Documents> r = new ArrayList<Documents>();
-        try{
-            if (f.canRead()){
-                if (f.isFile()) {
-                    final String ext = getExt(f.getAbsolutePath());
-                    Path file = Paths.get(f.getAbsolutePath());
-                    BasicFileAttributes a = Files.readAttributes(file, BasicFileAttributes.class);
-                    PosixFileAttributes z = Files.readAttributes(file,PosixFileAttributes.class);
-                    r.add(new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime(),
-                            a.creationTime(),a.lastAccessTime()),f.getAbsolutePath(),0/*links*/,a.isRegularFile(),
-                            a.isOther(),f.isHidden(),z.group().getName(),z.owner().getName(),getPermissions(z.permissions())));
-                } else {
-                    for (File q : f.listFiles()){
-                        r.addAll(list(q));
-                    }
-                }
-            }
-        } catch (NullPointerException e){
-            throw new ServerException(e);
+    private AllFiles list(File f) {
+        return list(f, new AllFiles(new ArrayList<Documents>(), new ArrayList<Path>()));
+    }
+
+    private AllFiles list(File f, AllFiles acc) {
+        Path file = null;
+        if (!f.canRead())
+            return acc;
+        else if (f.canRead())
+            file = Paths.get(f.getAbsolutePath());
+        if (f.isFile())
+            return acc.adddoc(addFile(file));
+        else if (Files.isSymbolicLink(file))
+            return acc.addlink(file);
+        else {
+            AllFiles r = acc;
+            for (File q : f.listFiles())
+                r = r.add(list(q, acc));
+            return r;
+        }
+    }
+
+
+    private String trim(String path){
+        return (path.startsWith(".") ? path : ((path.contains(".")) ? path.substring(0,path.lastIndexOf(".")) : path));
+    }
+
+
+    private String getExt(String path){
+        int i = path.lastIndexOf(".");
+        return (i<0) ? "" : path.substring(i,path.length());
+    }
+
+    
+    private Documents addFile(Path file){
+        final String ext = getExt(file.toFile().getAbsolutePath());
+        final BasicFileAttributes a;
+        final PosixFileAttributes z;
+        try {
+            a = Files.readAttributes(file, BasicFileAttributes.class);
+            z = Files.readAttributes(file,PosixFileAttributes.class);
         } catch (IOException e) {
             throw new ServerException(e);
         }
-        //show(r);
-        return r;
+        return new Documents(trim(file.getFileName().toString()),ext,new Date(a.lastModifiedTime(),
+                a.creationTime(),a.lastAccessTime()),file.toFile().getAbsolutePath(),0/*links*/,a.isRegularFile(),
+                a.isOther(),file.toFile().isHidden(),z.group().getName(),z.owner().getName(),getPermissions(z.permissions()));
+
     }
+
 
     private Integer getPermissions(Set<PosixFilePermission> permissions) {
         Integer r = 0;
@@ -98,21 +136,6 @@ public class FileSystem implements Runnable {
         if (s.contains("OTHERS_EXECUTE"))
             r+= 1;
         return r;
-    }
-
-    private void show(List<Documents> documents){
-        for (Documents document : documents) {
-            System.out.println("document = " + document.name);
-        }
-    }
-
-    private String getExt(String path){
-        int i = path.lastIndexOf(".");
-        return (i<0) ? "" : path.substring(i,path.length());
-    }
-
-    private String trim(String path){
-        return (path.startsWith(".") ? path : ((path.contains(".")) ? path.substring(0,path.lastIndexOf(".")) : path));
     }
 
 }

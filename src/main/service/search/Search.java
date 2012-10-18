@@ -15,22 +15,23 @@ public class Search {
         //new VersionOne().seutp();
         
         Threads threads = new Threads();
-        //threads.add(new main.schedule.jobs.FileSystem(), 1 * SECOND);
+        threads.add(new main.schedule.jobs.FileSystem(), 1 * MINUTE);
 
 
-        /*
+
 
         try{
             //something
+            int i = 0;
+            for (;;){
+                i++;
+            }
 
 
         } finally {
+            long end = System.currentTimeMillis();
+            System.out.println("Run time: " + (end-start));
             threads.stop();
-        }             */
-        FileSystem z = new FileSystem();
-        z.run();
-
-        long end = System.currentTimeMillis();
-        System.out.println("Run time: " + (end-start));
+        }
     }
 }
