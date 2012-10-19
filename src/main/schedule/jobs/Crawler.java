@@ -150,15 +150,11 @@ public class Crawler implements Runnable {
         for (Path link : links) {
 
             String dir;
-            Path dir1;
             try {
-                dir = Files.readSymbolicLink(link).toFile().getAbsolutePath();
-                dir1 = Files.readSymbolicLink(link);
+                dir = link.toFile().getCanonicalPath();
             } catch (IOException e) {
                 throw new ServerException(e);
             }
-            System.out.println("dir1 = " + dir1);
-            System.out.println("dir = " + dir);
             if (linksDb.exists(connection,dir) == Status.OK){
                 File d = new File(dir);
                 if (d.isFile()){
