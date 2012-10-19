@@ -3,18 +3,11 @@ package main.service.search;
 import main.config.ConfigSetup;
 import main.config.Schema;
 import main.config.database.VersionOne;
-import main.data.core.Action;
-import main.data.error.ServerException;
-import main.db.Connector;
-import main.db.EdgePreparedStatement;
-import main.db.EdgeResultSet;
-import main.db.Statement;
 import main.schedule.background.Threads;
-import main.schedule.jobs.FileSystem;
-import main.tool.CrapToMove;
+import main.schedule.jobs.Crawler;
 
 import java.io.File;
-import java.sql.*;
+import static main.data.state.Params.records;
 
 public class Search {
     private static final long SECOND = 1000;
@@ -25,8 +18,11 @@ public class Search {
     public static void main(String[] args){
         long start = System.currentTimeMillis();
 
-        if (args.length>=1)
+        if (args.length>=1) {
+            //program arguments
             ConfigSetup.set(new File(args[0]));
+            records.put("dir", args[1]);
+        }
         else
             ConfigSetup.set(new File("config.properties"));
 
@@ -36,7 +32,7 @@ public class Search {
 
         //threads
         Threads threads = new Threads();
-        threads.add(new FileSystem(), 10 * SECOND);
+        threads.add(new Crawler(), 10 * SECOND);
 
         try{
             for (;;) {}

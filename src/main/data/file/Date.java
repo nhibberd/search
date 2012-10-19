@@ -1,7 +1,5 @@
 package main.data.file;
 
-import java.nio.file.attribute.FileTime;
-
 public class Date {
     public long mtime;
     public long ctime;
@@ -21,4 +19,15 @@ public class Date {
                 ", atime=" + atime +
                 '}';
     }
+
+    public boolean compare (String type, long time){
+        if (type.equals("mtime"))
+            return (this.mtime==time);
+        else if (type.equals("ctime"))
+            return (this.ctime==time);
+        else if (type.equals("atime"))
+            return (this.atime==time);
+        return false;
+    }
+
 }

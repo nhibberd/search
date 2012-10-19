@@ -5,7 +5,7 @@ import main.config.ConfigSetup;
 import main.db.Connector;
 import main.db.Statement;
 
-public class CrapToMove {
+public class Database {
     public static final Config config = new ConfigSetup().stuff();
 
 

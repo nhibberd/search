@@ -9,10 +9,8 @@ import main.db.EdgeResultSet;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
 
-import static main.tool.CrapToMove.statement;
+import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
 public class FileDb {
@@ -33,7 +31,7 @@ public class FileDb {
 
     public Status insert(Connection connection, final Documents doc) {
         String sqlInsert = "INSERT INTO \"SEARCH\".\"FILE\"( NAME, EXT, MTIME, CTIME, ATIME, URL, LINKS, " +
-                "REGFILE, OTHER, HIDDEN, GROUPS, OWNER, PERMISSIONS, HASH ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "REGFILE, OTHER, HIDDEN, GROUP_NAME, OWNER, PERMISSIONS, HASH ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return statement.withStatement(connection,sqlInsert, new Function<PreparedStatement, Status>() {
             public Status apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
@@ -74,15 +72,28 @@ public class FileDb {
         });
     }
 
-    //todo update
-    private Boolean update(Connection connection, final Documents docs) {
-        String sqlUpdate = "UPDATE \"SEARCH\".\"FILE\" SET \"NAME\" = ?,\"URL\" = ? WHERE \"ID\" = ?";
+    public Boolean update(Connection connection, final Documents docs) {
+        String sqlUpdate = "UPDATE \"SEARCH\".\"FILE\" SET \"NAME\" = ?, \"EXT\" = ?, \"MTIME\" = ?, \"CTIME\" = ?, " +
+                "\"ATIME\" = ?, \"URL\" = ?, \"LINKS\" = ?, \"REGFILE\" = ?, \"OTHER\" = ?, \"HIDDEN\" = ?, \"GROUP_NAME\" = ?," +
+                " \"OWNER\" = ?, \"PERMISSIONS\" = ?, \"HASH\" = ? WHERE \"ID\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {
             public Boolean apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
                 q.setString(1,docs.name);
-                q.setString(1,docs.url);
-                q.setInt(1,docs.id);
+                q.setString(2,docs.ext);
+                q.setLong(3, docs.times.mtime);
+                q.setLong(4, docs.times.ctime);
+                q.setLong(5, docs.times.atime);
+                q.setString(6, docs.url);
+                q.setInt(7, docs.links);
+                q.setBoolean(8, docs.regfile);
+                q.setBoolean(9, docs.other);
+                q.setBoolean(10, docs.hidden);
+                q.setString(11, docs.group);
+                q.setString(12, docs.owner);
+                q.setInt(13, docs.permissions);
+                q.setString(14, docs.hash);
+                q.setInt(15,docs.id);
                 int i = q.executeUpdate();
                 return i != 0;
             }

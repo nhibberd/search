@@ -2,18 +2,14 @@ package main.service.file;
 
 import main.data.core.Function;
 import main.data.core.Status;
-import main.data.file.Date;
-import main.data.file.Documents;
 import main.data.file.Links;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
 
-import static main.tool.CrapToMove.statement;
+import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
 public class LinksDb {
@@ -33,12 +29,13 @@ public class LinksDb {
     }
 
     public Status insert(Connection connection, final Links link) {
-        String sqlInsert = "INSERT INTO \"SEARCH\".\"LINKS\"( DIR, LINKS ) VALUES (?, ?)";
+        String sqlInsert = "INSERT INTO \"SEARCH\".\"LINKS\"( DIR, LINKS, DONE ) VALUES (?, ?, ?)";
         return statement.withStatement(connection,sqlInsert, new Function<PreparedStatement, Status>() {
             public Status apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
                 q.setString(1, link.dir );
                 q.setInt(2, link.links);
+                q.setBoolean(3, link.done);
                 return checkrow(q.executeUpdate());
             }
         });
@@ -53,9 +50,22 @@ public class LinksDb {
                 q.setString(1, dir);
                 EdgeResultSet z = new EdgeResultSet(q);
                 if (z.next()){
-                    r = (new Links(z.getString(1),z.getInt(2)));
+                    r = (new Links(z.getString(1),z.getInt(2),z.getBoolean(3)));
                 }
                 return r;
+            }
+        });
+    }
+
+    public Boolean update(Connection connection, final Links data) {
+        String sqlUpdate = "UPDATE \"SEARCH\".\"FILE\" SET \"DONE\" = ? WHERE \"DIR\" = ?";
+        return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {
+            public Boolean apply(PreparedStatement preparedStatement) {
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                q.setBoolean(1, data.done);
+                q.setString(2,data.dir);
+                int i = q.executeUpdate();
+                return i != 0;
             }
         });
     }

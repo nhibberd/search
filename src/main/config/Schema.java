@@ -5,13 +5,13 @@ import main.db.Connector;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
 import main.db.Statement;
-import main.tool.CrapToMove;
+import main.tool.Database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 public class Schema {
-    Connector connector = CrapToMove.connector;
+    Connector connector = Database.connector;
 
     public void apply (){
         connector.withConnection(new Action<Connection>() {

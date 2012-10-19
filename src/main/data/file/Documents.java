@@ -68,6 +68,34 @@ public class Documents {
         return true;
     }
 
+    public boolean compareHidden(boolean input){
+        return this.hidden==input;
+    }
+
+    public boolean compareOther(boolean input){
+        return this.other==input;
+    }
+
+    public boolean compareRegfile(boolean input){
+        return this.regfile==input;
+    }
+
+    public boolean compareOwner(String input){
+        return this.owner.equals(input);
+    }
+
+    public boolean compareGroup(String input){
+        return this.group.equals(input);
+    }
+
+    public boolean comparePermissions(Integer input){
+        return (this.permissions == input);
+    }
+
+    public boolean compareHash(String input){
+        return this.hash.equals(input);
+    }
+
 }
 
 
