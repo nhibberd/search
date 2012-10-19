@@ -45,12 +45,14 @@ public class FileSystem implements Runnable {
 
     public void run() {
         final AllFiles files = list(new File("/home/dev/nick/notes"));
+
         System.out.println("size = " + files.size());
 
+        final AllFiles finalFiles = files;
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
-                eval(connection, files.docs);
-                evalLinks(connection, files.links);
+                eval(connection, finalFiles.docs);
+                evalLinks(connection, finalFiles.links);
             }
         });
     }
@@ -124,6 +126,8 @@ public class FileSystem implements Runnable {
 
     private AllFiles list(File f, AllFiles acc) {
         Path file = null;
+        System.out.println("f.canRead() = " + f.canRead());
+        System.out.println("f.getAbsolutePath() = " + f.getAbsolutePath());
         if (!f.canRead())
             return acc;
         else if (f.canRead())
