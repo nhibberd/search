@@ -1,4 +1,4 @@
-Directory passed in
+Directory passed in --
 
 iterate -> collect File names, times, links(sym), D, E, dir, #links
 
