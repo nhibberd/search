@@ -2,7 +2,6 @@ package main.data.file;
 
 public class Documents {
 
-
     public Integer id;
     public String name;
     public String ext;

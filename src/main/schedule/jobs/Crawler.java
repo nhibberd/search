@@ -6,8 +6,10 @@ import main.data.error.ServerException;
 import main.data.file.AllFiles;
 import main.data.file.Documents;
 import main.data.file.Links;
+import main.data.file.State;
 import main.service.file.FileDb;
 import main.service.file.LinksDb;
+import main.service.file.StateDb;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,24 +72,33 @@ public class Crawler implements Runnable {
 
 
     private void eval(Connection connection, List<Documents> docs) {
-        FileDb database = new FileDb();
+        FileDb fileDb = new FileDb();
+        StateDb stateDb = new StateDb();
         for (Documents doc : docs) {
 
-            if (database.exists(connection,doc.url) == Status.OK){
+            if (fileDb.exists(connection,doc.url) == Status.OK){
                 doc.hash = hash(doc.url);
-                database.insert(connection,doc);
+                fileDb.insert(connection, doc);
+
+                if (stateDb.exists(connection,doc.url) == Status.OK)
+                    stateDb.insert(connection,new State(doc.url));
             } else {
-                Documents dbdoc = database.get(connection, doc.url);
+                Documents dbdoc = fileDb.get(connection, doc.url);
 
                 //works
                 if (!doc.compare(dbdoc)){
                     //Don't equal each other
+                    State state = new State(dbdoc.url);
                     doc.hash = hash(doc.url);
 
-                    if (!dbdoc.times.compare("atime",doc.times.atime))
+                    if (!dbdoc.times.compare("atime",doc.times.atime)) {
                         dbdoc.times.atime = doc.times.atime;
-                    if (!dbdoc.times.compare("mtime",doc.times.mtime))
+                        state.atime+=1;
+                    }
+                    if (!dbdoc.times.compare("mtime",doc.times.mtime)) {
                         dbdoc.times.mtime = doc.times.mtime;
+                        state.mtime+=1;
+                    }
                     if (!dbdoc.times.compare("ctime",doc.times.ctime))
                         dbdoc.times.ctime = doc.times.ctime;
                     if (!dbdoc.compareHidden(doc.hidden))
@@ -96,15 +107,25 @@ public class Crawler implements Runnable {
                         dbdoc.other = doc.other;
                     if (!dbdoc.compareRegfile(doc.regfile))
                         dbdoc.regfile = doc.regfile;
-                    if (!dbdoc.compareGroup(doc.group))
+                    if (!dbdoc.compareGroup(doc.group)) {
                         dbdoc.group = doc.group;
-                    if (!dbdoc.compareOwner(doc.owner))
+                        state.group+=1;
+                    }
+                    if (!dbdoc.compareOwner(doc.owner)) {
                         dbdoc.owner = doc.owner;
-                    if (!dbdoc.compareHash(doc.hash))
+                        state.owner+=1;
+                    }
+                    if (!dbdoc.comparePermissions(doc.permissions)){
+                        dbdoc.permissions =doc.permissions;
+                        state.permissions+=1;
+                    }
+                    if (!dbdoc.compareHash(doc.hash)) {
                         dbdoc.hash = doc.hash;
+                    }
 
-                    database.update(connection, dbdoc);
 
+                    fileDb.update(connection, dbdoc);
+                    stateDb.update(connection,state);
 
                     //todo store in new table if changes
                 }
