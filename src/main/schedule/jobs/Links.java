@@ -1,11 +1,11 @@
 package main.schedule.jobs;
 
 import main.data.core.Action;
+import main.data.core.Status;
 import main.data.file.Documents;
 import main.service.file.FileDb;
 import main.service.file.LinksDb;
 
-import java.security.PrivateKey;
 import java.sql.Connection;
 import java.util.List;
 
@@ -23,16 +23,21 @@ public class Links implements Runnable {
 
                 for (main.data.file.Links link : listLinks) {
                     List<Documents> docs = crawler.getDocs(link.dir);
+
                     for (Documents doc : docs) {
-                        if (doc.hasID()){
-                            doc.links += 1;
+                        if (fileDb.exists(connection,doc.url) == Status.OK)
+                            System.out.println("file outside original search param."); //todo
+                        else {
+                            Documents dbdoc = fileDb.get(connection, doc.url);
+                            doc.id = dbdoc.id;
+                            doc.hash = dbdoc.hash;
+                            doc.links = dbdoc.links + link.links;
                             fileDb.update(connection, doc);
                         }
 
                     }
                     link.done = true;
                     linksDb.update(connection, link);
-
                 }
 
             }

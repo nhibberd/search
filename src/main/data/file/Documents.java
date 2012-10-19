@@ -95,11 +95,6 @@ public class Documents {
     public boolean compareHash(String input){
         return this.hash.equals(input);
     }
-
-    public boolean hasID(){
-        return (this.id != null);
-    }
-
 }
 
 

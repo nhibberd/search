@@ -65,6 +65,22 @@ public class StateDb {
         });
     }
 
+    public Integer getCount (Connection connection, final String url){
+        String sql = "SELECT (\"MTIME\" + \"ATIME\" + \"GROUP_NAME\" + \"OWNER\" + \"PERMISSIONS\") As calc FROM \"SEARCH\".\"STATE\" WHERE \"URL\" = ?";
+        return statement.withStatement(connection, sql, new Function<PreparedStatement, Integer>() {
+            public Integer apply(PreparedStatement preparedStatement) {
+                Integer r = null;
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                q.setString(1,url);
+                EdgeResultSet z = new EdgeResultSet(q);
+                if (z.next()){
+                    r = z.getInt(1);
+                }
+                return r;
+            }
+        });
+    }
+
     public Boolean update(Connection connection, final State input) {
         String sqlUpdate = "UPDATE \"SEARCH\".\"STATE\" SET \"MTIME\" = ?, \"ATIME\" = ?, \"GROUP_NAME\" = ?, \"OWNER\" = ?, " +
                 "\"PERMISSIONS\" = ? WHERE \"URL\" = ?";

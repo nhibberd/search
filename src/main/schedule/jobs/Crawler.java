@@ -61,11 +61,10 @@ public class Crawler implements Runnable {
             return acc;
         else if (f.canRead())
             file = Paths.get(f.getAbsolutePath());
-        if (f.isFile() || !f.isDirectory())  {
+        if ((f.isFile() && !Files.isSymbolicLink(file)) || (!f.isDirectory() && !Files.isSymbolicLink(file)))  {
             return acc.adddoc(addFile(file));
         }
         else if (Files.isSymbolicLink(file)){
-            System.out.println("file = " + file);
             return acc.addlink(file);
         } else {
             AllFiles r = acc;
@@ -148,7 +147,6 @@ public class Crawler implements Runnable {
 
         FileDb fileDb = new FileDb();
         for (Path link : links) {
-
             String dir;
             try {
                 dir = link.toFile().getCanonicalPath();
@@ -162,23 +160,17 @@ public class Crawler implements Runnable {
                         Documents data = fileDb.get(connection,dir);
                         data.links =+ 1;
                         fileDb.update(connection,data);
-                        linksDb.insert(connection, new Links(dir, 0, true));
                     }
                 }
-                linksDb.insert(connection, new Links(dir, 0, false));
-
+                linksDb.insert(connection, new Links(dir, 1, false));
+            } else {
+                Links data = linksDb.get(connection, dir);
+                if (!data.done) {
+                    data.links+=1;
+                    linksDb.update(connection, data);
+                }
             }
-
-            Links dblink = linksDb.get(connection, dir);
-            //stuff
-
-            //update filedb with number of links for doc
-
-
-
         }
-
-
         //todo check db | add to db
     }
 }
