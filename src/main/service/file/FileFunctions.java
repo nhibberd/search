@@ -40,7 +40,9 @@ public class FileFunctions {
         } catch (NoSuchAlgorithmException e) {
             throw new ServerException(e);
         } catch (FileNotFoundException e) {
-            throw new ServerException(e);
+            //Only possible if temporary file has been deleted between crawl and evaluation
+            return "";
+            //throw new ServerException(e);
         } catch (IOException e) {
             throw new ServerException(e);
         }
@@ -54,7 +56,9 @@ public class FileFunctions {
 
     public static String getExt(String path){
         int i = path.lastIndexOf(".");
-        return (i<0) ? "" : path.substring(i,path.length());
+        int slash = path.lastIndexOf("/");
+        String r = (slash<i) ? path.substring(i,path.length()) : "" ;
+        return (i<0) ? "" : r;
     }
 
 

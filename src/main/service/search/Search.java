@@ -5,6 +5,7 @@ import main.config.Schema;
 import main.config.database.VersionOne;
 import main.schedule.background.Threads;
 import main.schedule.jobs.Crawler;
+import main.schedule.jobs.Links;
 
 import java.io.File;
 import static main.data.state.Params.records;
@@ -33,6 +34,7 @@ public class Search {
         //threads
         Threads threads = new Threads();
         threads.add(new Crawler(), 10 * SECOND);
+        threads.add(new Links(), 10 * SECOND);
 
         try{
             for (;;) {}

@@ -17,6 +17,7 @@ public class Documents {
     public String hash;
 
 
+
     public Documents(String name, String ext, Date times, String url, Integer links, boolean regfile, boolean other, boolean hidden, String group, String owner, Integer permissions) {
         this.name = name;
         this.ext = ext;
@@ -93,6 +94,10 @@ public class Documents {
 
     public boolean compareHash(String input){
         return this.hash.equals(input);
+    }
+
+    public boolean hasID(){
+        return (this.id != null);
     }
 
 }

@@ -49,7 +49,6 @@ public class VersionOne {
                 try{
                     userreturn = create(connection, createuser);
                 } catch (ServerException e){
-                    System.out.println("z");
                     userreturn = false;
                 }
                 try{

@@ -8,6 +8,8 @@ import main.db.EdgeResultSet;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
@@ -57,8 +59,23 @@ public class LinksDb {
         });
     }
 
+    public List<Links> getAll (Connection connection){
+        String sql = "SELECT * FROM \"SEARCH\".\"LINKS\" WHERE \"DONE\" = FALSE";
+        return statement.withStatement(connection, sql, new Function<PreparedStatement, List<Links>>() {
+            public List<Links> apply(PreparedStatement preparedStatement) {
+                List<Links> r = new ArrayList<Links>();
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                EdgeResultSet z = new EdgeResultSet(q);
+                while (z.next()){
+                    r.add(new Links(z.getString(1),z.getInt(2),z.getBoolean(3)));
+                }
+                return r;
+            }
+        });
+    }
+
     public Boolean update(Connection connection, final Links data) {
-        String sqlUpdate = "UPDATE \"SEARCH\".\"FILE\" SET \"DONE\" = ? WHERE \"DIR\" = ?";
+        String sqlUpdate = "UPDATE \"SEARCH\".\"LINKS\" SET \"DONE\" = ? WHERE \"DIR\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {
             public Boolean apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);

@@ -36,15 +36,18 @@ public class Crawler implements Runnable {
     public void run() {
         //final AllFiles files = list(new File("/home/nick"));
         final AllFiles files = list(new File(records.get("dir")));
-        System.out.println("size = " + files.size());
+        System.out.println("List size = " + files.size());
 
-        final AllFiles finalFiles = files;
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
-                eval(connection, finalFiles.docs);
-                evalLinks(connection, finalFiles.links);
+                eval(connection, files.docs);
+                evalLinks(connection, files.links);
             }
         });
+    }
+
+    public List<Documents> getDocs(String dir) {
+        return list(new File(dir)).docs;
     }
 
 
@@ -58,11 +61,13 @@ public class Crawler implements Runnable {
             return acc;
         else if (f.canRead())
             file = Paths.get(f.getAbsolutePath());
-        if (f.isFile())
+        if (f.isFile() || !f.isDirectory())  {
             return acc.adddoc(addFile(file));
-        else if (Files.isSymbolicLink(file))
+        }
+        else if (Files.isSymbolicLink(file)){
+            System.out.println("file = " + file);
             return acc.addlink(file);
-        else {
+        } else {
             AllFiles r = acc;
             for (File q : f.listFiles())
                 r = r.add(list(q, acc));
@@ -80,7 +85,7 @@ public class Crawler implements Runnable {
                 doc.hash = hash(doc.url);
                 fileDb.insert(connection, doc);
 
-                if (stateDb.exists(connection,doc.url) == Status.OK)
+                if (stateDb.exists(connection, doc.url) == Status.OK)
                     stateDb.insert(connection,new State(doc.url));
             } else {
                 Documents dbdoc = fileDb.get(connection, doc.url);
@@ -143,12 +148,17 @@ public class Crawler implements Runnable {
 
         FileDb fileDb = new FileDb();
         for (Path link : links) {
+
             String dir;
+            Path dir1;
             try {
                 dir = Files.readSymbolicLink(link).toFile().getAbsolutePath();
+                dir1 = Files.readSymbolicLink(link);
             } catch (IOException e) {
                 throw new ServerException(e);
             }
+            System.out.println("dir1 = " + dir1);
+            System.out.println("dir = " + dir);
             if (linksDb.exists(connection,dir) == Status.OK){
                 File d = new File(dir);
                 if (d.isFile()){
