@@ -43,10 +43,8 @@ public class Search {
 
 
             SelectDocuments process = new SelectDocuments();
-             List<String> d = process.listDocuments("idea", 8);
-            for (String s : d) {
-                System.out.println("s = " + s);
-            }
+            System.out.println("top doc : " + process.topDocument("idea"));
+            System.out.println("top file : " + process.topDocument("idea"));
 
             for (;;) {}
 

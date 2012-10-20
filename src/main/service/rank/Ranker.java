@@ -39,7 +39,7 @@ public class Ranker {
      *  Permissions : 2
      *
      */
-
+    //todo NOT WORKING...
     public void run() {
         long start = System.currentTimeMillis();
         connector.withConnection(new Action<Connection>() {
@@ -56,10 +56,8 @@ public class Ranker {
                 for (Documents doc : z) {
                     if (stateDb.exists(connection,doc.url) == Status.BAD_REQUEST) {
                         Integer count = stateDb.getCount(connection, doc.url);
-                        if (count>0) {
-                            State s = stateDb.get(connection,doc.url);
-                            d.add(new Score(doc.id, doc.url, score(s, doc.links, count)));
-                        }
+                        State s = stateDb.get(connection,doc.url);
+                        d.add(new Score(doc.id, doc.url, score(s, doc.links, count)));
                     }
                 }
 

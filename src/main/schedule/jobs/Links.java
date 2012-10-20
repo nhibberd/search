@@ -21,7 +21,6 @@ public class Links implements Runnable {
      */
 
     public void run() {
-        System.out.println("link...");
         long start = System.currentTimeMillis();
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
@@ -52,7 +51,7 @@ public class Links implements Runnable {
             }
         });
         long end = System.currentTimeMillis();
-        System.out.println("done link. Run time: " + (end-start));
+        System.out.println("Done linking. Run time: " + (end-start));
     }
 
 }
