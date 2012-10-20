@@ -19,6 +19,7 @@ import static main.service.rank.RankFunctions.*;
 
 public class Ranker {
 
+    //todo ranking algorithm || File. a=5,m=5,g=2,o=2,p=1 ++ Application a=5,m=1,g=2,o=2,p=2
     public void run() {
         System.out.println("ranking...");
         long start = System.currentTimeMillis();
@@ -38,10 +39,10 @@ public class Ranker {
                         Integer count = stateDb.getCount(connection, doc.url);
                         if (count>0) {
                             State s = stateDb.get(connection,doc.url);
-                            d.add(new Score(doc.id, doc.url, score(s, count)));
+                            d.add(new Score(doc.id, doc.url, score(s, doc.links, count)));
                         }
                     }
-                }                //todo ranking algorithm || File. a=5,m=5,g=2,o=2,p=1 ++ Application a=5,m=1,g=2,o=2,p=2
+                }
 
                 for (Score score : d) {
                     if (rankDb.exists(connection,score.id_file) == Status.OK)
@@ -55,7 +56,7 @@ public class Ranker {
         System.out.println("done rank. Run time: " + (end-start));
     }
 
-    private Integer score(State s, Integer count){
+    private Integer score(State s, Integer links, Integer count){
         Integer r = 0;
         if(isApplication(s.permissions)){
             if (s.atime>0)
@@ -68,7 +69,7 @@ public class Ranker {
                 r = s.owner * 2;
             if (s.permissions>0)
                 r = s.permissions * 2;
-            return r;
+            return r(r,links);
         } else if (isDocument(s.url)){
             if (s.atime>0)
                 r = s.atime * 4;
@@ -80,8 +81,13 @@ public class Ranker {
                 r = s.owner * 2;
             if (s.permissions>0)
                 r = s.permissions * 1;
-            return r;
+            return r(r,links);
         }
-        return count;
+        return r(count,links);
+    }
+
+    private Integer r(Integer r, Integer links){
+        r = r * links;
+        return r;
     }
 }

@@ -15,7 +15,7 @@ import static main.tool.Validations.checkrow;
 
 public class RankDb {
     public Status exists(Connection connection, final Integer id) {
-        String sql = "SELECT * FROM \"SEARCH\".\"RANK\" WHERE \"ID\" = ? ";
+        String sql = "SELECT * FROM \"SEARCH\".\"RANK\" WHERE \"ID_FILE\" = ? ";
         return statement.withStatement(connection,sql, new Function<PreparedStatement, Status>() {
             public Status apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
@@ -36,14 +36,14 @@ public class RankDb {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
                 q.setInt(1, data.id_file);
                 q.setString(2, data.url);
-                q.setInt(2, data.score);
+                q.setInt(3, data.score);
                 return checkrow(q.executeUpdate());
             }
         });
     }
 
     public Integer get (Connection connection, final Integer id){
-        String sql = "SELECT * FROM \"SEARCH\".\"RANK\" WHERE \"ID\" = ?";
+        String sql = "SELECT * FROM \"SEARCH\".\"RANK\" WHERE \"ID_FILE\" = ?";
         return statement.withStatement(connection, sql, new Function<PreparedStatement, Integer>() {
             public Integer apply(PreparedStatement preparedStatement) {
                 Integer r = null;
@@ -59,7 +59,7 @@ public class RankDb {
     }
 
     public Boolean update(Connection connection, final Score data) {
-        String sqlUpdate = "UPDATE \"SEARCH\".\"RANK\" SET \"SCORE\" = ? WHERE \"ID\" = ?";
+        String sqlUpdate = "UPDATE \"SEARCH\".\"RANK\" SET \"SCORE\" = ? WHERE \"ID_FILE\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {
             public Boolean apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);

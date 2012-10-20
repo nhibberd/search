@@ -4,6 +4,9 @@ import main.config.ConfigSetup;
 import main.config.Schema;
 import main.config.database.VersionOne;
 import main.schedule.background.Threads;
+import main.schedule.jobs.Crawler;
+import main.schedule.jobs.Links;
+import main.service.query.Select;
 
 import java.io.File;
 
@@ -32,11 +35,12 @@ public class Search {
 
         //threads
         Threads threads = new Threads();
-        //threads.add(new Crawler(), 10 * SECOND);
-        //threads.add(new Links(), 60 * SECOND);
-        //threads.add(new Ranker(), 10 * SECOND);
+        threads.add(new Crawler(), 10 * SECOND);
+        threads.add(new Links(), 60 * SECOND);
 
         try{
+            Select process = new Select();
+            System.out.println(process.document("rsa"));
 
             for (;;) {}
 

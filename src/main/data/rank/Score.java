@@ -15,4 +15,9 @@ public class Score {
         this.url = url;
         this.score = score;
     }
+
+    public Score( String url, Integer score) {
+        this.url = url;
+        this.score = score;
+    }
 }

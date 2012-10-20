@@ -1,7 +1,8 @@
-package main.service.index;
+package main.service.query;
 
 import main.data.core.Function;
 import main.data.index.Id;
+import main.service.index.IndexDb;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import static main.tool.Database.connector;
 public class Index {
     //todo make index publicly available, take off thread.
 
-    public List<Id> get(Connection connection, final String word) {
+    public static List<Id> getIds(Connection connection, final String word) {
         return connector.withConnection(new Function<Connection, List<Id>>() {
             public List<Id> apply(final Connection connection) {
                 IndexDb database = new IndexDb();
@@ -31,7 +32,7 @@ public class Index {
 
     }
 
-    private Integer convert(String data){
+    private static Integer convert(String data){
         return Integer.parseInt( data );
     }
 
