@@ -18,12 +18,13 @@ public class Ranking implements Runnable {
     public void run() {
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
-                StateDb database = new StateDb();
+                StateDb statDb = new StateDb();
+
                 List<Documents> z = crawler.getDocs("/home/nick");
                 List<Change> d = new ArrayList<Change>();
                 for (Documents documents : z) {
-                    if (database.exists(connection,documents.url) == Status.BAD_REQUEST) {
-                        Integer count = database.getCount(connection, documents.url);
+                    if (statDb.exists(connection,documents.url) == Status.BAD_REQUEST) {
+                        Integer count = statDb.getCount(connection, documents.url);
                         if (count>0)      //todo fix null pointer
                             d.add(new Change(count, documents.url));
                     }

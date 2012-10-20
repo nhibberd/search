@@ -2,8 +2,6 @@ package main.service.index;
 
 import main.data.core.Function;
 import main.data.core.Status;
-import main.data.file.State;
-import main.data.index.Urls;
 import main.data.index.Word;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
@@ -62,7 +60,6 @@ public class IndexDb {
     }
 
     public Boolean update(Connection connection, final Word data) {
-        System.out.println("data.id_file_count = " + data.word + " : " + data.id_file_count);
         String sqlUpdate = "UPDATE \"SEARCH\".\"INDEX\" SET \"ID_FILE_COUNT\" = ? WHERE \"WORD\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {
             public Boolean apply(PreparedStatement preparedStatement) {

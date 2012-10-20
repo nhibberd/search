@@ -4,7 +4,7 @@ import main.data.core.Function;
 import main.data.core.Status;
 import main.data.file.Date;
 import main.data.file.Documents;
-import main.data.index.Urls;
+import main.data.index.Names;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
 
@@ -36,7 +36,7 @@ public class FileDb {
         return statement.withStatement(connection,sql, new Function<PreparedStatement, Status>() {
             public Status apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
-                q.setInt(1,id);
+                q.setInt(1, id);
                 EdgeResultSet z = new EdgeResultSet(q);
                 if (z.next()){
                     return Status.BAD_REQUEST;
@@ -90,15 +90,33 @@ public class FileDb {
         });
     }
 
-    public List<Urls> getIndexUrls(Connection connection) {
-        String sql = "SELECT ID, URL FROM \"SEARCH\".\"FILE\" WHERE INDEXED = FALSE";
-        return statement.withStatement(connection, sql, new Function<PreparedStatement, List<Urls>>() {
-            public List<Urls> apply(PreparedStatement preparedStatement) {
-                List<Urls> r = new ArrayList<Urls>();
+    public Documents get (Connection connection, final Integer id){
+        String sql = "SELECT * FROM \"SEARCH\".\"FILE\" WHERE \"ID\" = ?";
+        return statement.withStatement(connection, sql, new Function<PreparedStatement, Documents>() {
+            public Documents apply(PreparedStatement preparedStatement) {
+                Documents r = null;
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                q.setInt(1, id);
+                EdgeResultSet z = new EdgeResultSet(q);
+                if (z.next()){
+                    r = (new Documents(z.getInt(1),z.getString(2),z.getString(3),new Date(z.getLong(4),z.getLong(5),z.getLong(6)),
+                            z.getString(7),z.getInt(8),z.getBoolean(9),z.getBoolean(10),z.getBoolean(11),z.getString(12),
+                            z.getString(13),z.getInt(14),z.getString(15), z.getBoolean(16)));
+                }
+                return r;
+            }
+        });
+    }
+
+    public List<Names> getIndexNames(Connection connection) {
+        String sql = "SELECT ID, NAME FROM \"SEARCH\".\"FILE\" WHERE INDEXED = FALSE";
+        return statement.withStatement(connection, sql, new Function<PreparedStatement, List<Names>>() {
+            public List<Names> apply(PreparedStatement preparedStatement) {
+                List<Names> r = new ArrayList<Names>();
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
                 EdgeResultSet z = new EdgeResultSet(q);
                 while (z.next()){
-                    r.add(new Urls(z.getInt(1),z.getString(2)));
+                    r.add(new Names(z.getInt(1),z.getString(2)));
                 }
                 return r;
             }

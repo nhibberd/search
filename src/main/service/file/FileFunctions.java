@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
@@ -60,7 +61,6 @@ public class FileFunctions {
         String r = (slash<i) ? path.substring(i+1,path.length()) : "" ;
         return (i<0) ? "" : r;
     }
-
 
     public static Documents addFile(Path file){
         final String ext = getExt(file.toFile().getAbsolutePath());
