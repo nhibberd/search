@@ -62,12 +62,13 @@ public class IndexDb {
     }
 
     public Boolean update(Connection connection, final Word data) {
-        String sqlUpdate = "UPDATE \"SEARCH\".\"INDEX\" SET \"ID_TIME_COUNT\" = ? WHERE \"WORD\" = ?";
+        System.out.println("data.id_file_count = " + data.word + " : " + data.id_file_count);
+        String sqlUpdate = "UPDATE \"SEARCH\".\"INDEX\" SET \"ID_FILE_COUNT\" = ? WHERE \"WORD\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {
             public Boolean apply(PreparedStatement preparedStatement) {
                 EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
                 q.setString(1, data.id_file_count);
-                q.setString(6, data.word);
+                q.setString(2, data.word);
                 int i = q.executeUpdate();
                 return i != 0;
             }

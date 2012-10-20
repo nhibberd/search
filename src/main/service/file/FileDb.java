@@ -31,6 +31,20 @@ public class FileDb {
             }
         });
     }
+    public Status exists(Connection connection, final Integer id) {
+        String sql = "SELECT * FROM \"SEARCH\".\"FILE\" WHERE \"ID\" = ? ";
+        return statement.withStatement(connection,sql, new Function<PreparedStatement, Status>() {
+            public Status apply(PreparedStatement preparedStatement) {
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                q.setInt(1,id);
+                EdgeResultSet z = new EdgeResultSet(q);
+                if (z.next()){
+                    return Status.BAD_REQUEST;
+                }
+                return Status.OK;
+            }
+        });
+    }
 
     public Status insert(Connection connection, final Documents doc) {
         String sqlInsert = "INSERT INTO \"SEARCH\".\"FILE\"( NAME, EXT, MTIME, CTIME, ATIME, URL, LINKS, " +

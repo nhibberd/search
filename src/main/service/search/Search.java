@@ -41,6 +41,7 @@ public class Search {
         threads.add(new Ranking(), 10 * SECOND);
 
         try{
+
             for (;;) {}
 
 

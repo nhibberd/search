@@ -57,7 +57,7 @@ public class FileFunctions {
     public static String getExt(String path){
         int i = path.lastIndexOf(".");
         int slash = path.lastIndexOf("/");
-        String r = (slash<i) ? path.substring(i,path.length()) : "" ;
+        String r = (slash<i) ? path.substring(i+1,path.length()) : "" ;
         return (i<0) ? "" : r;
     }
 
