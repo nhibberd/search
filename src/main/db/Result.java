@@ -2,7 +2,6 @@ package main.db;
 
 import main.data.core.Function;
 import main.data.error.DatabaseException;
-import main.data.error.ServerException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

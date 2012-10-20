@@ -1,10 +1,16 @@
 package main.service.query;
 
 public class Select {
-    //todo
-    //todo if not dir and has +x then assume executable
+
+
+
     /*
-   (filename.endsWith(".htm") || filename.endsWith(".html") ||
-             filename.endsWith(".xml") || filename.endsWith(".txt")) {
-    */
+    todo
+    Single: check for search term. get documents attached, get rank of documents, produce ranked list
+
+    Multi: iterate(check term, get documents, get rank, add to list ), produce ranked list from all terms.
+            ||   only get documents which have all terms?
+
+
+     */
 }

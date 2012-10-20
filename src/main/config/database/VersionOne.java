@@ -4,7 +4,6 @@ import main.config.Config;
 import main.config.ConfigSetup;
 import main.data.core.Function;
 import main.data.error.DatabaseException;
-import main.data.error.ServerException;
 import main.db.Connector;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;
@@ -24,7 +23,7 @@ public class VersionOne {
 
         //todo changes
         final String schema = "CREATE SCHEMA search AUTHORIZATION admin\n" +
-                "CREATE TABLE IF NOT EXISTS changes ( id INTEGER PRIMARY KEY, mtime INTEGER )\n" +
+                "CREATE TABLE IF NOT EXISTS rank ( id_file INTEGER PRIMARY KEY, url VARCHAR(255), score INTEGER )\n" +
                 "CREATE TABLE IF NOT EXISTS index ( word VARCHAR(255) PRIMARY KEY, id_file_count VARCHAR(10000) )\n" +
                 "CREATE TABLE IF NOT EXISTS links ( dir VARCHAR(255), links INTEGER, done BOOLEAN )\n" +
                 "CREATE TABLE IF NOT EXISTS state ( url VARCHAR(255), mtime INTEGER, atime INTEGER, group_name INTEGER, owner INTEGER, permissions INTEGER )\n" +
@@ -34,7 +33,7 @@ public class VersionOne {
                 "CREATE TABLE IF NOT EXISTS schema_version ( version VARCHAR(25) PRIMARY KEY )\n" +
                 "GRANT ALL ON links TO admin\n" +
                 "GRANT ALL ON index TO admin\n" +
-                "GRANT ALL ON changes TO admin\n" +
+                "GRANT ALL ON rank TO admin\n" +
                 "GRANT ALL ON state TO admin\n" +
                 "GRANT ALL ON file TO admin\n" +
                 "GRANT ALL ON schema_version TO admin;";

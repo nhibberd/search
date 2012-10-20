@@ -1,4 +1,4 @@
-package main.schedule.jobs;
+package main.service.index;
 
 import main.data.core.Action;
 import main.data.core.Status;
@@ -6,18 +6,19 @@ import main.data.file.Documents;
 import main.data.index.Names;
 import main.data.index.Word;
 import main.service.file.FileDb;
-import main.service.index.IndexDb;
 
 import java.sql.Connection;
 import java.util.List;
 
 import static main.tool.Database.connector;
 
-public class Indexing implements Runnable  {
+public class Indexer {
     private static final String regex = "\\.|\\s|\\,|\\(|\\)|\\[|\\]|\\*|\\?|\\_|\\-";
 
     public void run() {
         System.out.println("Indexing...");
+        long start = System.currentTimeMillis();
+
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
                 FileDb fileDb = new FileDb();
@@ -30,6 +31,8 @@ public class Indexing implements Runnable  {
                 }
             }
         });
+        long end = System.currentTimeMillis();
+        System.out.println("done indexing. Run time: " + (end-start));
     }
 
     private void add(Connection connection, Names name) {
@@ -51,6 +54,7 @@ public class Indexing implements Runnable  {
     private void check(Connection connection, String s, Integer count, Integer id_file){
         IndexDb indexDb = new IndexDb();
         String id_file_count = (id_file + ":" + count);
+
 
         if (indexDb.exists(connection,s) == Status.OK){
             indexDb.insert(connection,new Word(s,id_file_count));

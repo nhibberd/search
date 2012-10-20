@@ -4,12 +4,9 @@ import main.config.ConfigSetup;
 import main.config.Schema;
 import main.config.database.VersionOne;
 import main.schedule.background.Threads;
-import main.schedule.jobs.Crawler;
-import main.schedule.jobs.Indexing;
-import main.schedule.jobs.Links;
-import main.schedule.jobs.Ranking;
 
 import java.io.File;
+
 import static main.data.state.Params.records;
 
 public class Search {
@@ -35,10 +32,9 @@ public class Search {
 
         //threads
         Threads threads = new Threads();
-        threads.add(new Crawler(), 10 * SECOND);
-        threads.add(new Links(), 60 * SECOND);
-        threads.add(new Indexing(), 30 * SECOND);
-        //threads.add(new Ranking(), 10 * SECOND);
+        //threads.add(new Crawler(), 10 * SECOND);
+        //threads.add(new Links(), 60 * SECOND);
+        //threads.add(new Ranker(), 10 * SECOND);
 
         try{
 

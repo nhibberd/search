@@ -15,6 +15,7 @@ public class Links implements Runnable {
     private Crawler crawler = new Crawler();
     public void run() {
         System.out.println("link...");
+        long start = System.currentTimeMillis();
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
                 LinksDb linksDb = new LinksDb();
@@ -43,6 +44,8 @@ public class Links implements Runnable {
 
             }
         });
+        long end = System.currentTimeMillis();
+        System.out.println("done link. Run time: " + (end-start));
     }
 
 }

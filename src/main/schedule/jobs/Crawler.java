@@ -10,6 +10,8 @@ import main.data.file.State;
 import main.service.file.FileDb;
 import main.service.file.LinksDb;
 import main.service.file.StateDb;
+import main.service.index.Indexer;
+import main.service.rank.Ranker;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,24 +22,19 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static main.tool.Database.connector;
-import static main.service.file.FileFunctions.*;
 import static main.data.state.Params.records;
+import static main.service.file.FileFunctions.addFile;
+import static main.service.file.FileFunctions.hash;
+import static main.tool.Database.connector;
 
 public class Crawler implements Runnable {
-
-    //todo check if file is in db
-    //todo if it is, check times, check hash
-
-    //note execuatable updates access time
-
-
+    private Indexer index = new Indexer();
+    private Ranker rank = new Ranker();
 
     public void run() {
-        System.out.println("crawling...");
-        //final AllFiles files = list(new File("/home/nick"));
+        System.out.println("Crawling...");
+        long start = System.currentTimeMillis();
         final AllFiles files = list(new File(records.get("dir")));
-        System.out.println("List size = " + files.size());
 
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
@@ -45,7 +42,11 @@ public class Crawler implements Runnable {
                 evalLinks(connection, files.links);
             }
         });
-        //todo at end of crawl, run index and rank?
+        long end = System.currentTimeMillis();
+        System.out.println("done crawling. Run time: " + (end - start));
+        index.run();
+        rank.run();
+
     }
 
     public List<Documents> getDocs(String dir) {
@@ -95,7 +96,8 @@ public class Crawler implements Runnable {
                 //works
                 if (!doc.compare(dbdoc)){
                     //Don't equal each other
-                    State state = new State(dbdoc.url);
+                    State state = stateDb.get(connection, dbdoc.url);
+
                     doc.hash = hash(doc.url);
 
                     if (!dbdoc.times.compare("atime",doc.times.atime)) {
@@ -126,25 +128,15 @@ public class Crawler implements Runnable {
                         dbdoc.permissions =doc.permissions;
                         state.permissions+=1;
                     }
-                    if (!dbdoc.compareHash(doc.hash)) {
+                    if (!dbdoc.compareHash(doc.hash))
                         dbdoc.hash = doc.hash;
-                    }
-
-
                     fileDb.update(connection, dbdoc);
                     stateDb.update(connection,state);
-
-                    //todo store in new table if changes
                 }
             }
-
-            //todo check links (job) = dont need to do this anymore
-
-
         }
     }
 
-    //todo check if file has links to it ( or dir )
     private void evalLinks(Connection connection, List<Path> links){
         LinksDb linksDb = new LinksDb();
 
@@ -174,6 +166,5 @@ public class Crawler implements Runnable {
                 }
             }
         }
-        //todo check db | add to db
     }
 }

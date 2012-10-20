@@ -108,6 +108,23 @@ public class FileDb {
         });
     }
 
+    public List<Documents> getAll (Connection connection){
+        String sql = "SELECT * FROM \"SEARCH\".\"FILE\"";
+        return statement.withStatement(connection, sql, new Function<PreparedStatement, List<Documents>>() {
+            public List<Documents> apply(PreparedStatement preparedStatement) {
+                List<Documents> r = new ArrayList<Documents>();
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                EdgeResultSet z = new EdgeResultSet(q);
+                while (z.next()){
+                    r.add(new Documents(z.getInt(1),z.getString(2),z.getString(3),new Date(z.getLong(4),z.getLong(5),z.getLong(6)),
+                            z.getString(7),z.getInt(8),z.getBoolean(9),z.getBoolean(10),z.getBoolean(11),z.getString(12),
+                            z.getString(13),z.getInt(14),z.getString(15), z.getBoolean(16)));
+                }
+                return r;
+            }
+        });
+    }
+
     public List<Names> getIndexNames(Connection connection) {
         String sql = "SELECT ID, NAME FROM \"SEARCH\".\"FILE\" WHERE INDEXED = FALSE";
         return statement.withStatement(connection, sql, new Function<PreparedStatement, List<Names>>() {

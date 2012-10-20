@@ -1,6 +1,5 @@
 package main.service.index;
 
-import main.data.core.Action;
 import main.data.core.Function;
 import main.data.index.Id;
 
