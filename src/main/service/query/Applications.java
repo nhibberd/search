@@ -6,21 +6,18 @@ import main.data.core.Status;
 import main.data.index.Id;
 import main.data.rank.Score;
 import main.service.file.FileDb;
-import main.service.file.StateDb;
-import main.service.index.IndexDb;
 import main.service.rank.RankDb;
-import sun.net.idn.StringPrep;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static main.service.query.Index.getIds;
+import static main.service.rank.RankFunctions.isApplication;
+import static main.service.rank.RankFunctions.isDocument;
 import static main.tool.Database.connector;
-import static main.service.query.Index.*;
-import static main.service.rank.RankFunctions.*;
 
-public class SelectDocuments {
+public class Applications {
     private FileDb fileDb = new FileDb();
     private RankDb rankDb = new RankDb();
 
@@ -33,13 +30,12 @@ public class SelectDocuments {
         return query.split("\\s");
     }
 
-
     /**
      *
-     * @param query document name to search
-     * @return Absolute path to document
+     * @param query application name to search
+     * @return Absolute path to application
      */
-    public String topDocument(final String query){
+    public String top(final String query){
         return connector.withConnection(new Function<Connection, String>() {
             public String apply(final Connection connection) {
                 List<Score> end = new ArrayList<Score>();
@@ -49,13 +45,17 @@ public class SelectDocuments {
                     List<Score> scores = new ArrayList<Score>();
                     List<Id> ids = getIds(connection,word);
                     for (Id id : ids) {
-                        Result<Score> tmp = document(id.id_file);
+                        Result<Score> tmp = application(id.id_file);
                         if (tmp.statusOK() )
                             end.add(tmp.value());
                     }
                 }
 
-                String r = top(end).value().url;
+
+                String r = "";
+                Result<Score> q = top(end);
+                if (q.statusOK())
+                    r = q.value().url;
                 if (r.equals(""))
                     return "No result's";
                 else
@@ -66,10 +66,10 @@ public class SelectDocuments {
 
     /**
      *
-     * @param query document name to search
-     * @return List of Absolute path to document
+     * @param query application name to search
+     * @return List of Absolute path to application
      */
-    public List<String> listDocuments(final String query){
+    public List<String> list(final String query){
         return connector.withConnection(new Function<Connection, List<String>>() {
             public List<String> apply(final Connection connection) {
                 List<String> end = new ArrayList<String>();
@@ -79,17 +79,16 @@ public class SelectDocuments {
                     List<Score> scores = new ArrayList<Score>();
                     List<Id> ids = getIds(connection,word);
                     for (Id id : ids) {
-                        Result<Score> tmp = document(id.id_file);
+                        Result<Score> tmp = application(id.id_file);
                         if (tmp.statusOK() ) {
                             String url = tmp.value().url;
-                            if (isDocument(url)){
+                            if (isApplication(fileDb.get(connection, id.id_file).permissions)){
                                 if (!end.contains(url))
                                     end.add(url);
                             }
                         }
                     }
                 }
-
 
                 if (!(end.size() > 0))
                     end.add("No result's");
@@ -102,12 +101,12 @@ public class SelectDocuments {
 
     /**
      *
-     * @param query document name to search
+     * @param query application name to search
      * @param size size of list to return
-     * @return List of Absolute path to document
+     * @return List of Absolute path to application
      */
 
-    public List<String> listDocuments(final String query, final Integer size){
+    public List<String> list(final String query, final Integer size){
         return connector.withConnection(new Function<Connection, List<String>>() {
             public List<String> apply(final Connection connection) {
                 List<Score> big = new ArrayList<Score>();
@@ -120,14 +119,15 @@ public class SelectDocuments {
                     List<Id> ids = getIds(connection,word);
 
                     for (Id id : ids) {
-                        Result<Score> tmp = document(id.id_file);
+                        Result<Score> tmp = application(id.id_file);
                         if (tmp.statusOK() )  {
-                            if (isDocument(tmp.value().url)){
+                            if (isApplication(fileDb.get(connection, id.id_file).permissions)){
                                 if (!scores.contains(tmp.value()))
                                     scores.add(tmp.value());
                             }
                         }
                     }
+
                     big.addAll(scores);
                 }
 
@@ -161,7 +161,7 @@ public class SelectDocuments {
         Score re = null;
         Integer highrank = -1;
         for (Score data : input) {
-            if (isDocument(data.url)){
+            if (isApp(data.id_file) == Status.OK){
                 if (data.score > highrank){
 
                     re = data;
@@ -169,10 +169,23 @@ public class SelectDocuments {
 
                 }
             }
+            if (data.score > highrank){
+                re = data;
+                highrank = data.score;
+
+            }
         }
         if (highrank>-1)
             return Result.ok(re);
         return Result.notfound();
+    }
+
+    private Status isApp(final Integer id){
+        return connector.withConnection(new Function<Connection, Status>() {
+            public Status apply(final Connection connection) {
+                return (isApplication(fileDb.get(connection, id).permissions)) ? Status.OK : Status.BAD_REQUEST;
+            }
+        });
     }
 
     /**
@@ -180,12 +193,11 @@ public class SelectDocuments {
      * @param file File ID
      * @return Result of Score
      */
-    private Result<Score> document(final Integer file){
+    private Result<Score> application(final Integer file){
         return connector.withConnection(new Function<Connection, Result<Score>>() {
             public Result<Score> apply(final Connection connection) {
-                if ((rankDb.exists(connection, file) == Status.BAD_REQUEST) && (fileDb.exists(connection, file) == Status.BAD_REQUEST)){
+                if ((rankDb.exists(connection, file) == Status.BAD_REQUEST) && (fileDb.exists(connection, file) == Status.BAD_REQUEST))
                     return Result.ok(new Score(file, fileDb.get(connection, file).url, rankDb.getScore(connection, file)));
-                }
                 return Result.notfound();
             }
         });

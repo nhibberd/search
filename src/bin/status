@@ -1,0 +1,20 @@
+#!/bin/sh
+
+bin="`dirname $0`"
+base="$bin/.."
+
+: ${SEARCH_PID:=$base/var/run/search.pid}
+
+if [ -f "$SEARCH_PID" ]; then
+   if ps waux | awk '{print $2}' | grep -q `cat "$SEARCH_PID"`; then
+     echo "[RUNNING]"
+     exit 0
+   else
+     rm "$SEARCH_PID"
+     echo "[STOPPED]"
+     exit 1
+   fi
+else
+  echo "[STOPPED]"
+  exit 1
+fi

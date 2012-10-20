@@ -1,0 +1,10 @@
+#!/bin/sh
+
+bin="`dirname $0`"
+base="$bin/.."
+
+if $bin/status > /dev/null; then
+  $bin/stop
+fi
+
+$bin/start "$@"

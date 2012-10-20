@@ -70,7 +70,7 @@ public class Ranker {
             }
         });
         long end = System.currentTimeMillis();
-        System.out.println("Done ranking. Run time: " + (end-start));
+        System.out.println("\tDone ranking. Run time: " + (end-start));
     }
 
 

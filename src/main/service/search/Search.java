@@ -6,10 +6,8 @@ import main.config.database.VersionOne;
 import main.schedule.background.Threads;
 import main.schedule.jobs.Crawler;
 import main.schedule.jobs.Links;
-import main.service.query.SelectDocuments;
 
 import java.io.File;
-import java.util.List;
 
 import static main.data.state.Params.records;
 
@@ -21,30 +19,32 @@ public class Search {
 
     public static void main(String[] args){
         long start = System.currentTimeMillis();
+        long crawlPoll = 60 * SECOND;
 
-        if (args.length>=1) {
-            //program arguments
+        //program arguments
+        if (args.length >= 0)
             ConfigSetup.set(new File(args[0]));
-            records.put("dir", args[1]);
-        }
         else
             ConfigSetup.set(new File("config.properties"));
+
+        if (args.length >= 1)
+            records.put("dir", args[1]);
+        if (args.length >= 2)
+            crawlPoll = Long.valueOf(args[2]);
+
 
         //db setup
         new VersionOne().setup();
         new Schema().apply();
 
+
         //threads
         Threads threads = new Threads();
-        threads.add(new Crawler(), 60 * SECOND);
+        threads.add(new Crawler(), crawlPoll);
         threads.add(new Links(), 60 * SECOND);
 
         try{
 
-
-            SelectDocuments process = new SelectDocuments();
-            System.out.println("top doc : " + process.topDocument("idea"));
-            System.out.println("top file : " + process.topDocument("idea"));
 
             for (;;) {}
 

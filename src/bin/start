@@ -1,0 +1,24 @@
+#!/bin/sh
+
+bin="`dirname $0`"
+base="$bin/.."
+classpath="$base/lib/search.jar:$base/lib/hsqldb.jar"
+
+mkdir -p "$base/log" "$base/var/run"
+
+: ${SEARCH_LOG:=$base/log/stdout.log}
+: ${SEARCH_ERR:=$base/log/stderr.log}
+: ${SEARCH_PID:=$base/var/run/search.pid}
+
+if $bin/status > /dev/null; then
+  echo "Search already running..."
+  exit 99
+fi
+
+nohup java -Xmx512M -classpath "$classpath" main.service.search.Search "$@" > "$SEARCH_LOG" 2> "$SEARCH_ERR" &
+
+echo $! > "$SEARCH_PID"
+
+echo "[RUNNING] search service started"
+
+exit 0

@@ -1,24 +1,22 @@
 #!/bin/sh
 
 version=`date +%Y%m%d%H%M`
-image=gen/image/agpro-$version
+image=gen/image/search-$version
 [ -d gen ] && rm -rf gen
 mkdir -p $image/lib $image/bin gen/classes gen/dist
 find src/main -name \*.java > gen/main.list
-classpath="lib/run/foil.jar;lib/run/gson-1.7.1.jar;lib/run/hsqldb.jar;lib/run/jetty-ajp-7.1.6.v20100715.jar;lib/run/jetty-annotations-7.1.6.v20100715.jar;lib/run/jetty-client-7.1.6.v20100715.jar;lib/run/jetty-continuation-7.1.6.v20100715.jar;lib/run/jetty-deploy-7.1.6.v20100715.jar;lib/run/jetty-http-7.1.6.v20100715.jar;lib/run/jetty-io-7.1.6.v20100715.jar;lib/run/jetty-jmx-7.1.6.v20100715.jar;lib/run/jetty-jndi-7.1.6.v20100715.jar;lib/run/jetty-plus-7.1.6.v20100715.jar;lib/run/jetty-policy-7.1.6.v20100715.jar;lib/run/jetty-rewrite-7.1.6.v20100715.jar;lib/run/jetty-security-7.1.6.v20100715.jar;lib/run/jetty-server-7.1.6.v20100715.jar;lib/run/jetty-servlet-7.1.6.v20100715.jar;lib/run/jetty-servlets-7.1.6.v20100715.jar;lib/run/jetty-util-7.1.6.v20100715.jar;lib/run/jetty-webapp-7.1.6.v20100715.jar;lib/run/jetty-websocket-7.1.6.v20100715.jar;lib/run/jetty-xml-7.1.6.v20100715.jar;lib/run/mail.jar;lib/run/pirate.jar;lib/run/scala-library.jar;lib/run/scalaz-core_2.8.0-5.0-sources.jar;lib/run/scalaz-core_2.8.0-5.0.jar;lib/run/servlet-api-2.5.jar"
-javac -source 1.6 -target 1.6 -classpath "$classpath" -d gen/classes @gen/main.list
-jar cvf gen/dist/agpro.jar -C gen/classes .
-cp lib/run/* gen/dist/agpro.jar $image/lib
+classpath="lib/run/hsqldb.jar"
+javac -source 1.7 -target 1.7 -classpath "$classpath" -d gen/classes @gen/main.list
+jar cvf gen/dist/search.jar -C gen/classes .
+cp lib/run/* gen/dist/search.jar $image/lib
 cp src/bin/* $image/bin
 for x in  $image/bin/*; do
   dos2unix $x
 done
 cp config.properties $image/config.properties.template
-cp config.properties.server $image/config.properties.server
-cp -r src/web $image/web
 chmod +x $image/bin/*
 cp README $image
-tar cfz gen/dist/agpro.tar.gz -C gen/image .
-#(cd gen/image && zip -q ../../gen/dist/agpro.zip -r .)
+tar cfz gen/dist/search.tar.gz -C gen/image .
+#(cd gen/image && zip -q ../../gen/dist/search.zip -r .)
 
-echo agpro-$version
+echo search-$version

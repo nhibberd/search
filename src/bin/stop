@@ -1,0 +1,16 @@
+#!/bin/sh
+
+bin="`dirname $0`"
+base="$bin/.."
+
+: ${SEARCH_PID:=$base/var/run/search.pid}
+
+if ! $bin/status > /dev/null; then
+  echo "Search is not running..."
+  exit 99
+fi
+
+
+kill `cat "$SEARCH_PID"`
+
+echo "[STOPPED] search service stopped"

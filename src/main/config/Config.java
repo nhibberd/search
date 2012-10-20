@@ -5,7 +5,6 @@ public class Config {
     public String dbuser;
     public String dbpassword;
 
-
     public Config(String dblocation, String dbuser, String dbpassword) {
         this.dblocation = dblocation;
         this.dbuser = dbuser;

@@ -34,7 +34,7 @@ public class Indexer {
             }
         });
         long end = System.currentTimeMillis();
-        System.out.println("Done indexing. Run time: " + (end-start));
+        System.out.println("\tDone indexing. Run time: " + (end-start));
     }
 
     private void add(Connection connection, Names name) {
