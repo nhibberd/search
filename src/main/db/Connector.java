@@ -8,6 +8,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Handles database connection
+ */
+
 public class Connector {
     private String url;
     private String username;
@@ -45,6 +49,7 @@ public class Connector {
             close(c);
         }
     }
+
 
     private void close(Connection c) {
         try {

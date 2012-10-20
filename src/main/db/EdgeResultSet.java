@@ -3,6 +3,10 @@ package main.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Edge for result sets
+ */
+
 public class EdgeResultSet {
     private ResultSet resultSet = null;
 

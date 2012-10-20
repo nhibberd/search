@@ -13,6 +13,13 @@ import static main.tool.Database.connector;
 
 public class Links implements Runnable {
     private Crawler crawler = new Crawler();
+
+    /**
+     * Runs as separate thread
+     * Checks symlinks to directory's and adds +1 links to any files within those directory's
+     *
+     */
+
     public void run() {
         System.out.println("link...");
         long start = System.currentTimeMillis();

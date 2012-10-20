@@ -1,8 +1,8 @@
 package main.service.query;
 
 import main.data.core.Function;
+import main.data.core.Result;
 import main.data.core.Status;
-import main.data.file.Documents;
 import main.data.index.Id;
 import main.data.rank.Score;
 import main.service.file.FileDb;
@@ -18,30 +18,44 @@ import static main.tool.Database.connector;
 import static main.service.query.Index.*;
 
 public class Select {
-
-
     private StateDb stateDb = new StateDb();
     private FileDb fileDb = new FileDb();
     private IndexDb indexDb = new IndexDb();
     private RankDb rankDb = new RankDb();
 
+    /**
+     *
+     * @param file File ID
+     * @return Result of Score
+     */
+    private Result<Score> document(final Integer file){
+        return connector.withConnection(new Function<Connection, Result<Score>>() {
+            public Result<Score> apply(final Connection connection) {
+                if ((rankDb.exists(connection, file) == Status.BAD_REQUEST) && (fileDb.exists(connection, file) == Status.BAD_REQUEST))
+                    return Result.ok(new Score(file, fileDb.get(connection, file).url, rankDb.getScore(connection, file)));
+                return Result.notfound();
+            }
+        });
+    }
 
 
-    public String document(final String query){
+    /**
+     *
+     * @param query document name to search
+     * @return Absolute path to document
+     */
+    public String topDocument(final String query){
         return connector.withConnection(new Function<Connection, String>() {
             public String apply(final Connection connection) {
                 List<Score> end = new ArrayList<Score>();
                 String re = "";
                 Integer highrank = 0;
 
-                if(indexDb.exists(connection, query) == Status.BAD_REQUEST){
-                    List<Id> ids = getIds(connection,query);
-
-                    for (Id id : ids) {
-                        if ((rankDb.exists(connection, id.id_file) == Status.BAD_REQUEST) && (fileDb.exists(connection, id.id_file) == Status.BAD_REQUEST))
-                        end.add(new Score(id.id_file, fileDb.get(connection, id.id_file).url,
-                                rankDb.get(connection,id.id_file)));
-                    }
+                List<Id> ids = getIds(connection,query);
+                for (Id id : ids) {
+                    Result<Score> tmp = document(id.id_file);
+                    if (tmp.statusOK() )
+                        end.add(tmp.value());
                 }
 
                 for (Score data : end) {
@@ -50,8 +64,37 @@ public class Select {
                         highrank = data.score;
                     }
                 }
+                if (re.equals(""))
+                    return "No results";
+                else
+                    return re;
+            }
+        });
+    }
 
-                return re;
+    /**
+     *
+     * @param query document name to search
+     * @return List of Absolute path to document
+     */
+    public List<String> listDocuments(final String query){
+        return connector.withConnection(new Function<Connection, List<String>>() {
+            public List<String> apply(final Connection connection) {
+                List<String> end = new ArrayList<String>();
+
+                List<Id> ids = getIds(connection,query);
+                for (Id id : ids) {
+                    String r = "";
+                    Result<Score> tmp = document(id.id_file);
+                    if (tmp.statusOK() )
+                        r = tmp.value().url;
+                    if (!end.contains(r))
+                        end.add(r);
+                }
+
+                if (!(end.size() > 0))
+                    end.add("No resutls");
+                return end;
             }
         });
     }
@@ -60,10 +103,10 @@ public class Select {
 
     /*
     todo
-    Single: check for search term. get documents attached, get rank of documents, produce ranked list
+    Single: check for search term. getScore documents attached, getScore rank of documents, produce ranked list
 
-    Multi: iterate(check term, get documents, get rank, add to list ), produce ranked list from all terms.
-            ||   only get documents which have all terms?
+    Multi: iterate(check term, getScore documents, getScore rank, add to list ), produce ranked list from all terms.
+            ||   only getScore documents which have all terms?
 
 
      */

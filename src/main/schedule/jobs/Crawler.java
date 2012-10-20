@@ -31,6 +31,10 @@ public class Crawler implements Runnable {
     private Indexer index = new Indexer();
     private Ranker rank = new Ranker();
 
+
+    /**
+     * Thread to collect file information from given directory
+     */
     public void run() {
         System.out.println("Crawling...");
         long start = System.currentTimeMillis();
@@ -48,6 +52,7 @@ public class Crawler implements Runnable {
         rank.run();
 
     }
+
 
     public List<Documents> getDocs(String dir) {
         return list(new File(dir)).docs;

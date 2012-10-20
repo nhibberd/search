@@ -8,6 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * Handles database prepared statements
+ */
+
 public class Statement {
     public Connection connection;
     public String sql;

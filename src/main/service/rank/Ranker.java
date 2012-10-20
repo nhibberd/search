@@ -19,7 +19,27 @@ import static main.service.rank.RankFunctions.*;
 
 public class Ranker {
 
-    //todo ranking algorithm || File. a=5,m=5,g=2,o=2,p=1 ++ Application a=5,m=1,g=2,o=2,p=2
+    /**
+     * Ranking algorithm
+     *
+     * Files:
+     *  Properties : weight
+     *  Accessed : 5
+     *  Modified : 5
+     *  Group : 2
+     *  Owner : 2
+     *  Permissions : 1
+     *
+     * Applications:
+     *  Properties : weight
+     *  Accessed : 5
+     *  Modified : 1
+     *  Group : 2
+     *  Owner : 2
+     *  Permissions : 2
+     *
+     */
+
     public void run() {
         System.out.println("ranking...");
         long start = System.currentTimeMillis();
@@ -56,6 +76,16 @@ public class Ranker {
         System.out.println("done rank. Run time: " + (end-start));
     }
 
+
+    /**
+     * Score based from number of changes and weighting according to
+     * ranking algorithm
+     *
+     * @param s State
+     * @param links Number of links to file
+     * @param count Number of changes on file ( acccess, modification, group, owner, permissions )
+     * @return Integer - score
+     */
     private Integer score(State s, Integer links, Integer count){
         Integer r = 0;
         if(isApplication(s.permissions)){

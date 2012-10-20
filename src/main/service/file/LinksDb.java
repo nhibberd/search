@@ -14,6 +14,10 @@ import java.util.List;
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
+/**
+ * LinksDb - Database access and manipulation with LINKS table
+ */
+
 public class LinksDb {
     public Status exists(Connection connection, final String dir) {
         String sql = "SELECT * FROM \"SEARCH\".\"LINKS\" WHERE \"DIR\" = ? ";

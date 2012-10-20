@@ -19,10 +19,12 @@ import java.util.Set;
 
 public class FileFunctions {
 
-
+    /**
+     * Create hash for files
+     * @param path File to be hashed
+     * @return Hash in base64
+     */
     public static String hash(String path){
-        //todo throwing errors - removeing .properties from file??
-
         try {
             MessageDigest z = MessageDigest.getInstance("SHA1");
             byte[] buffer = new byte[1024];
@@ -40,19 +42,22 @@ public class FileFunctions {
             throw new ServerException(e);
         } catch (FileNotFoundException e) {
             //Only possible if temporary file has been deleted between crawl and evaluation
-            return "";
-            //throw new ServerException(e);
+            //return "";
+            throw new ServerException(e);
         } catch (IOException e) {
             throw new ServerException(e);
         }
     }
 
-
     public static String trim(String path){
         return (path.startsWith(".") ? path : ((path.contains(".")) ? path.substring(0,path.lastIndexOf(".")) : path));
     }
 
-
+    /**
+     *
+     * @param path File path
+     * @return File extension
+     */
     public static String getExt(String path){
         int i = path.lastIndexOf(".");
         int slash = path.lastIndexOf("/");
@@ -60,6 +65,12 @@ public class FileFunctions {
         return (i<0) ? "" : r;
     }
 
+    /**
+     * Retrieves all relevant file attributes
+     *
+     * @param file File path
+     * @return Documents object with file attributes
+     */
     public static Documents addFile(Path file){
         final String ext = getExt(file.toFile().getAbsolutePath());
         final BasicFileAttributes a;
@@ -76,7 +87,11 @@ public class FileFunctions {
 
     }
 
-
+    /**
+     *
+     * @param permissions PosixFilePermission
+     * @return Integer - corresponding to permissions ( 1 - execute, 2 - write, 4 - read)
+     */
     public static Integer getPermissions(Set<PosixFilePermission> permissions) {
         Integer r = 0;
         String s = permissions.toString();

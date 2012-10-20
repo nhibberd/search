@@ -5,13 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RankFunctions {
-    //Assuming document extensions
+
+    /**
+     * Assuming document extensions
+     *
+     * @param url
+     * @return Boolean - True if extension matches assumed document extensions
+     */
     public static boolean isDocument(String url){
         return (url.endsWith(".htm") || url.endsWith(".html") || url.endsWith(".txt") ||
                 url.endsWith(".xml") || url.endsWith(".properties") || url.endsWith(".doc") || url.endsWith(".pdf") );
     }
 
-    //Assuming an application has +x permissions and is not a directory.
+
+    /**
+     * Assuming an application has +x permissions and is not a directory.
+     *
+     * @param permissions
+     * @return Boolean - True if permissions include +x
+     */
     public static boolean isApplication(Integer permissions){
         List<Integer> q = digits(permissions);
         for (Integer integer : q) {

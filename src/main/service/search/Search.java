@@ -9,6 +9,7 @@ import main.schedule.jobs.Links;
 import main.service.query.Select;
 
 import java.io.File;
+import java.util.List;
 
 import static main.data.state.Params.records;
 
@@ -35,12 +36,16 @@ public class Search {
 
         //threads
         Threads threads = new Threads();
-        threads.add(new Crawler(), 10 * SECOND);
+        threads.add(new Crawler(), 60 * SECOND);
         threads.add(new Links(), 60 * SECOND);
 
         try{
             Select process = new Select();
-            System.out.println(process.document("rsa"));
+            System.out.println("HAHAHHAHHAHAHHA     " + process.topDocument(("rsa")));
+            List<String> r = process.listDocuments("rsa");
+            for (String s : r) {
+                System.out.println("s = " + s);
+            }
 
             for (;;) {}
 

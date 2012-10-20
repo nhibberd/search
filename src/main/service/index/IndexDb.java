@@ -12,10 +12,18 @@ import java.sql.PreparedStatement;
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
+/**
+ * IndexDb - Database access and manipulation with INDEX table
+ */
+
 public class IndexDb {
 
-
-
+    /**
+     *
+     * @param connection SQL database connection
+     * @param word Seach term
+     * @return Status.OK - no result set, Status.BAD_REQUEST - result set exists
+     */
     public Status exists(Connection connection, final String word) {
         String sql = "SELECT * FROM \"SEARCH\".\"INDEX\" WHERE \"WORD\" = ? ";
         return statement.withStatement(connection,sql, new Function<PreparedStatement, Status>() {
@@ -31,6 +39,12 @@ public class IndexDb {
         });
     }
 
+    /**
+     *
+     * @param connection SQL database connection
+     * @param data main.data.index.Word
+     * @return Status
+     */
     public Status insert(Connection connection, final Word data) {
         String sqlInsert = "INSERT INTO \"SEARCH\".\"INDEX\"( WORD, ID_FILE_COUNT ) VALUES (?, ?)";
         return statement.withStatement(connection,sqlInsert, new Function<PreparedStatement, Status>() {
@@ -43,6 +57,12 @@ public class IndexDb {
         });
     }
 
+    /**
+     *
+     * @param connection SQL database connection
+     * @param word Seach term
+     * @return String - List of (file_id : count). Count is the number of times the word is in the corresponding file url
+     */
     public String get (Connection connection, final String word){
         String sql = "SELECT * FROM \"SEARCH\".\"INDEX\" WHERE \"WORD\" = ?";
         return statement.withStatement(connection, sql, new Function<PreparedStatement, String>() {
@@ -59,6 +79,12 @@ public class IndexDb {
         });
     }
 
+    /**
+     *
+     * @param connection SQL database connection
+     * @param data main.data.index.Word
+     * @return Boolean - correct update
+     */
     public Boolean update(Connection connection, final Word data) {
         String sqlUpdate = "UPDATE \"SEARCH\".\"INDEX\" SET \"ID_FILE_COUNT\" = ? WHERE \"WORD\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {

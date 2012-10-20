@@ -16,6 +16,10 @@ import java.util.List;
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
+/**
+ * FileDb - Database access and manipulation with FILE table
+ */
+
 public class FileDb {
     public Status exists(Connection connection, final String url) {
         String sql = "SELECT * FROM \"SEARCH\".\"FILE\" WHERE \"URL\" = ? ";

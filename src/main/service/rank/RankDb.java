@@ -13,7 +13,18 @@ import java.sql.PreparedStatement;
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
+/**
+ * RankDb - Database access and manipulation with RANK table
+ */
+
 public class RankDb {
+
+    /**
+     *
+     * @param connection  SQL database connection
+     * @param id  ID from FILE table
+     * @return Status.OK - no result set, Status.BAD_REQUEST - result set exists
+     */
     public Status exists(Connection connection, final Integer id) {
         String sql = "SELECT * FROM \"SEARCH\".\"RANK\" WHERE \"ID_FILE\" = ? ";
         return statement.withStatement(connection,sql, new Function<PreparedStatement, Status>() {
@@ -29,6 +40,12 @@ public class RankDb {
         });
     }
 
+    /**
+     *
+     * @param connection SQL database connection
+     * @param data main.data.rank.Score
+     * @return Status
+     */
     public Status insert(Connection connection, final Score data) {
         String sqlInsert = "INSERT INTO \"SEARCH\".\"RANK\"( ID_FILE, URL, SCORE ) VALUES (?, ?, ?)";
         return statement.withStatement(connection,sqlInsert, new Function<PreparedStatement, Status>() {
@@ -42,7 +59,14 @@ public class RankDb {
         });
     }
 
-    public Integer get (Connection connection, final Integer id){
+
+    /**
+     *
+     * @param connection SQL database connection
+     * @param id File ID from FILE table
+     * @return Status
+     */
+    public Integer getScore(Connection connection, final Integer id){
         String sql = "SELECT * FROM \"SEARCH\".\"RANK\" WHERE \"ID_FILE\" = ?";
         return statement.withStatement(connection, sql, new Function<PreparedStatement, Integer>() {
             public Integer apply(PreparedStatement preparedStatement) {
@@ -51,13 +75,20 @@ public class RankDb {
                 q.setInt(1, id);
                 EdgeResultSet z = new EdgeResultSet(q);
                 if (z.next()){
-                    r = z.getInt(2);
+                    r = z.getInt(3);
                 }
                 return r;
             }
         });
     }
 
+
+    /**
+     *
+     * @param connection SQL database connection
+     * @param data main.data.rank.Score
+     * @return true - updated correctly.
+     */
     public Boolean update(Connection connection, final Score data) {
         String sqlUpdate = "UPDATE \"SEARCH\".\"RANK\" SET \"SCORE\" = ? WHERE \"ID_FILE\" = ?";
         return statement.withStatement(connection, sqlUpdate, new Function<PreparedStatement, Boolean>() {

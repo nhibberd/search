@@ -12,6 +12,10 @@ import java.sql.PreparedStatement;
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
 
+/**
+ * StateDb - Database access and manipulation with STATE table
+ */
+
 public class StateDb {
 
 

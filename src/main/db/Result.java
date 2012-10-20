@@ -7,6 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Handles database result sets
+ */
+
 public class Result {
     private PreparedStatement statement;
 

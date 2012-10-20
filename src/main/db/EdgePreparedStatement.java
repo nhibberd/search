@@ -4,6 +4,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Edge for prepared statements
+ */
+
 public class EdgePreparedStatement {
     private final PreparedStatement delegate;
 

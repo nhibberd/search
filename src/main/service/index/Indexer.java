@@ -15,6 +15,9 @@ import static main.tool.Database.connector;
 public class Indexer {
     private static final String regex = "\\.|\\s|\\,|\\(|\\)|\\[|\\]|\\*|\\?|\\_|\\-";
 
+    /**
+     * Indexes files
+     */
     public void run() {
         System.out.println("Indexing...");
         long start = System.currentTimeMillis();
@@ -54,7 +57,6 @@ public class Indexer {
     private void check(Connection connection, String s, Integer count, Integer id_file){
         IndexDb indexDb = new IndexDb();
         String id_file_count = (id_file + ":" + count);
-
 
         if (indexDb.exists(connection,s) == Status.OK){
             indexDb.insert(connection,new Word(s,id_file_count));
