@@ -82,6 +82,7 @@ public class Crawler implements Runnable {
 
             if (fileDb.exists(connection,doc.url) == Status.OK){
                 doc.hash = hash(doc.url);
+                doc.indexed = false;
                 fileDb.insert(connection, doc);
 
                 if (stateDb.exists(connection, doc.url) == Status.OK)

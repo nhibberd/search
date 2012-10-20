@@ -1,4 +1,4 @@
-package main.data.Ranking;
+package main.data.rank;
 
 public class Change {
     public Integer count;

@@ -2,6 +2,7 @@ package main.db;
 
 import main.data.core.Action;
 import main.data.core.Function;
+import main.data.error.DatabaseException;
 import main.data.error.ServerException;
 
 import java.sql.Connection;
@@ -29,7 +30,7 @@ public class Statement {
             return thunk.apply(statement);
         } catch (Exception e) {
             rollback(statement);
-            throw new ServerException(e);
+            throw new DatabaseException(e);
         } finally {
             close(statement);
         }
@@ -43,7 +44,7 @@ public class Statement {
             thunk.apply(statement);
         } catch (Exception e) {
             rollback(statement);
-            throw new ServerException(e);
+            throw new DatabaseException(e);
         } finally {
             close(statement);
         }

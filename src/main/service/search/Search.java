@@ -5,6 +5,7 @@ import main.config.Schema;
 import main.config.database.VersionOne;
 import main.schedule.background.Threads;
 import main.schedule.jobs.Crawler;
+import main.schedule.jobs.Indexing;
 import main.schedule.jobs.Links;
 import main.schedule.jobs.Ranking;
 
@@ -36,6 +37,7 @@ public class Search {
         Threads threads = new Threads();
         threads.add(new Crawler(), 10 * SECOND);
         threads.add(new Links(), 10 * SECOND);
+        threads.add(new Indexing(), 10 * SECOND);
         threads.add(new Ranking(), 10 * SECOND);
 
         try{

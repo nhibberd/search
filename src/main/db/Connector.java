@@ -2,6 +2,7 @@ package main.db;
 
 import main.data.core.Action;
 import main.data.core.Function;
+import main.data.error.DatabaseException;
 import main.data.error.ServerException;
 
 import java.sql.Connection;
@@ -27,7 +28,7 @@ public class Connector {
             return a;
         } catch (Exception e) {            
             rollback(c);
-            throw new ServerException(e);
+            throw new DatabaseException(e);
         } finally {
             close(c);
         }
@@ -40,7 +41,7 @@ public class Connector {
             c.commit();
         } catch (Exception e) {
             rollback(c);
-            throw new ServerException(e);
+            throw new DatabaseException(e);
         } finally {
             close(c);
         }

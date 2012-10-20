@@ -1,11 +1,9 @@
 package main.schedule.jobs;
 
-import main.data.Ranking.Change;
-import main.data.core.Action;
 import main.data.core.Status;
+import main.data.rank.Change;
+import main.data.core.Action;
 import main.data.file.*;
-import main.service.file.FileDb;
-import main.service.file.LinksDb;
 import main.service.file.StateDb;
 
 import java.sql.Connection;
@@ -24,7 +22,11 @@ public class Ranking implements Runnable {
                 List<Documents> z = crawler.getDocs("/home/nick");
                 List<Change> d = new ArrayList<Change>();
                 for (Documents documents : z) {
-                    d.add(new Change(database.getCount(connection, documents.url), documents.url));
+                    if (database.exists(connection,documents.url) == Status.BAD_REQUEST) {
+                        Integer count = database.getCount(connection, documents.url);
+                        if (count>0)      //todo fix null pointer
+                            d.add(new Change(count, documents.url));
+                    }
                 }
                 for (Change data : d) {
                     if (data.count>0){
