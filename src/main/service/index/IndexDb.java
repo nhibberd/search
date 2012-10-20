@@ -8,6 +8,8 @@ import main.db.EdgeResultSet;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 
 import static main.tool.Database.statement;
 import static main.tool.Validations.checkrow;
@@ -73,6 +75,30 @@ public class IndexDb {
                 EdgeResultSet z = new EdgeResultSet(q);
                 if (z.next()){
                     r = z.getString(2);
+                }
+                return r;
+            }
+        });
+    }
+
+    /**
+     *
+     * @param connection SQL database connection
+     * @param word Seach term
+     * @return String - List of (file_id : count). Count is the number of times the word is in the corresponding file url
+     */
+    public List<String> getLike (Connection connection, final String word){
+        String like = "%";
+        final String use = like.concat(word.concat("%"));
+        String sql = "SELECT * FROM \"SEARCH\".\"INDEX\" WHERE \"WORD\" LIKE ?";
+        return statement.withStatement(connection, sql, new Function<PreparedStatement, List<String>>() {
+            public List<String> apply(PreparedStatement preparedStatement) {
+                List<String> r = new ArrayList<String>();
+                EdgePreparedStatement q = new EdgePreparedStatement(preparedStatement);
+                q.setString(1,use);
+                EdgeResultSet z = new EdgeResultSet(q);
+                while (z.next()){
+                    r.add(z.getString(2));
                 }
                 return r;
             }

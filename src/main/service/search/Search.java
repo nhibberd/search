@@ -6,7 +6,7 @@ import main.config.database.VersionOne;
 import main.schedule.background.Threads;
 import main.schedule.jobs.Crawler;
 import main.schedule.jobs.Links;
-import main.service.query.Select;
+import main.service.query.SelectDocuments;
 
 import java.io.File;
 import java.util.List;
@@ -40,10 +40,11 @@ public class Search {
         threads.add(new Links(), 60 * SECOND);
 
         try{
-            Select process = new Select();
-            System.out.println("HAHAHHAHHAHAHHA     " + process.topDocument(("rsa")));
-            List<String> r = process.listDocuments("rsa");
-            for (String s : r) {
+
+
+            SelectDocuments process = new SelectDocuments();
+             List<String> d = process.listDocuments("idea", 8);
+            for (String s : d) {
                 System.out.println("s = " + s);
             }
 

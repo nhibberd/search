@@ -41,7 +41,6 @@ public class Ranker {
      */
 
     public void run() {
-        System.out.println("ranking...");
         long start = System.currentTimeMillis();
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
@@ -73,7 +72,7 @@ public class Ranker {
             }
         });
         long end = System.currentTimeMillis();
-        System.out.println("done rank. Run time: " + (end-start));
+        System.out.println("Done ranking. Run time: " + (end-start));
     }
 
 

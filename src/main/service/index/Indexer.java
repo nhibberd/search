@@ -19,7 +19,6 @@ public class Indexer {
      * Indexes files
      */
     public void run() {
-        System.out.println("Indexing...");
         long start = System.currentTimeMillis();
 
         connector.withConnection(new Action<Connection>() {
@@ -35,7 +34,7 @@ public class Indexer {
             }
         });
         long end = System.currentTimeMillis();
-        System.out.println("done indexing. Run time: " + (end-start));
+        System.out.println("Done indexing. Run time: " + (end-start));
     }
 
     private void add(Connection connection, Names name) {

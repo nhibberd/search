@@ -7,9 +7,9 @@ import java.util.List;
 public class RankFunctions {
 
     /**
-     * Assuming document extensions
+     * Assuming document extensions ( htm, html, txt, xml, properties, doc, pdf )
      *
-     * @param url
+     * @param url File path
      * @return Boolean - True if extension matches assumed document extensions
      */
     public static boolean isDocument(String url){
@@ -21,7 +21,7 @@ public class RankFunctions {
     /**
      * Assuming an application has +x permissions and is not a directory.
      *
-     * @param permissions
+     * @param permissions File permissions
      * @return Boolean - True if permissions include +x
      */
     public static boolean isApplication(Integer permissions){

@@ -36,7 +36,6 @@ public class Crawler implements Runnable {
      * Thread to collect file information from given directory
      */
     public void run() {
-        System.out.println("Crawling...");
         long start = System.currentTimeMillis();
         final AllFiles files = list(new File(records.get("dir")));
 
@@ -47,7 +46,7 @@ public class Crawler implements Runnable {
             }
         });
         long end = System.currentTimeMillis();
-        System.out.println("done crawling. Run time: " + (end - start));
+        System.out.println("Done crawling. Run time: " + (end - start));
         index.run();
         rank.run();
 

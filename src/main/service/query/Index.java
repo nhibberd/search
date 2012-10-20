@@ -24,11 +24,20 @@ public class Index {
                 IndexDb database = new IndexDb();
                 List<Id>  r = new ArrayList<Id>();
                 if (database.exists(connection,word) == Status.BAD_REQUEST){
-                    String id_file_count = database.get(connection,word);
-                    String[] files = id_file_count.split("\\s");
-                    for (String file : files) {
-                        String[]data = file.split("\\:");
-                        r.add(new Id(convert(data[0]), convert(data[1])));
+                    List<String> id_file_count = database.getLike(connection, word);
+                    for (String s : id_file_count) {
+                        String[] files = s.split("\\s");
+                        for (String file : files) {
+                            String[] data = file.split("\\:");
+                            Id tmp = new Id(convert(data[0]), convert(data[1]));
+                            boolean check = true;
+                            for (Id id : r) {
+                                if (tmp.id_file == id.id_file)
+                                    check = false;
+                            }
+                            if (check)
+                                r.add(tmp);
+                        }
                     }
                 }
                 return r;
