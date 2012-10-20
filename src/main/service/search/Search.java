@@ -36,9 +36,9 @@ public class Search {
         //threads
         Threads threads = new Threads();
         threads.add(new Crawler(), 10 * SECOND);
-        threads.add(new Links(), 10 * SECOND);
-        threads.add(new Indexing(), 10 * SECOND);
-        threads.add(new Ranking(), 10 * SECOND);
+        threads.add(new Links(), 60 * SECOND);
+        threads.add(new Indexing(), 30 * SECOND);
+        //threads.add(new Ranking(), 10 * SECOND);
 
         try{
 

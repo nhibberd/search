@@ -16,6 +16,7 @@ public class Ranking implements Runnable {
     private Crawler crawler = new Crawler();
 
     public void run() {
+        System.out.println("ranking...");
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
                 StateDb statDb = new StateDb();

@@ -17,6 +17,7 @@ public class Indexing implements Runnable  {
     private static final String regex = "\\.|\\s|\\,|\\(|\\)|\\[|\\]|\\*|\\?|\\_|\\-";
 
     public void run() {
+        System.out.println("Indexing...");
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
                 FileDb fileDb = new FileDb();
@@ -50,8 +51,6 @@ public class Indexing implements Runnable  {
     private void check(Connection connection, String s, Integer count, Integer id_file){
         IndexDb indexDb = new IndexDb();
         String id_file_count = (id_file + ":" + count);
-        if (s.contains("rsa"))
-            System.out.println("id_file_count = " + id_file_count);
 
         if (indexDb.exists(connection,s) == Status.OK){
             indexDb.insert(connection,new Word(s,id_file_count));

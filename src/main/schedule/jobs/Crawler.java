@@ -34,6 +34,7 @@ public class Crawler implements Runnable {
 
 
     public void run() {
+        System.out.println("crawling...");
         //final AllFiles files = list(new File("/home/nick"));
         final AllFiles files = list(new File(records.get("dir")));
         System.out.println("List size = " + files.size());
@@ -44,6 +45,7 @@ public class Crawler implements Runnable {
                 evalLinks(connection, files.links);
             }
         });
+        //todo at end of crawl, run index and rank?
     }
 
     public List<Documents> getDocs(String dir) {

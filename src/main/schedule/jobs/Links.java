@@ -14,6 +14,7 @@ import static main.tool.Database.connector;
 public class Links implements Runnable {
     private Crawler crawler = new Crawler();
     public void run() {
+        System.out.println("link...");
         connector.withConnection(new Action<Connection>() {
             public void apply(final Connection connection) {
                 LinksDb linksDb = new LinksDb();
