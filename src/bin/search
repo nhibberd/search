@@ -4,5 +4,5 @@ bin="`dirname $0`"
 base="$bin/.."
 classpath="$base/lib/search.jar:$base/lib/hsqldb.jar"
 
-nohup java -Xmx512M -classpath "$classpath" main.service.search.Search "$@"
+java -classpath "$classpath" main.service.search.Search "$@"
 

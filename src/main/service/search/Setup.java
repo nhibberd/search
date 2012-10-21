@@ -21,14 +21,14 @@ public class Setup {
         long crawlPoll = 30 * SECOND;
 
         //program arguments
-        if (args.length >= 0)
+        if (args.length > 0)
             ConfigSetup.set(new File(args[0]));
         else
             ConfigSetup.set(new File("config.properties"));
 
-        if (args.length >= 1)
+        if (args.length > 1)
             records.put("dir", args[1]);
-        if (args.length >= 2)
+        if (args.length > 2)
             crawlPoll = Long.valueOf(args[2]);
 
 
