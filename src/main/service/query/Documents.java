@@ -39,32 +39,28 @@ public class Documents {
      * @param query document name to search
      * @return Absolute path to document
      */
-    public String top(final String query){
-        return connector.withConnection(new Function<Connection, String>() {
-            public String apply(final Connection connection) {
-                List<Score> end = new ArrayList<Score>();
-                String[] d = multiQuery(query);
+    public String top(Connection connection, final String query){
+        List<Score> end = new ArrayList<Score>();
+        String[] d = multiQuery(query);
 
-                for (String word : d) {
-                    List<Score> scores = new ArrayList<Score>();
-                    List<Id> ids = getIds(connection,word);
-                    for (Id id : ids) {
-                        Result<Score> tmp = document(id.id_file);
-                        if (tmp.statusOK() )
-                            end.add(tmp.value());
-                    }
-                }
-
-                String r = "";
-                Result<Score> q = top(end);
-                if (q.statusOK())
-                    r = q.value().url;
-                if (r.equals(""))
-                    return "No result's";
-                else
-                    return r;
+        for (String word : d) {
+            List<Score> scores = new ArrayList<Score>();
+            List<Id> ids = getIds(connection,word);
+            for (Id id : ids) {
+                Result<Score> tmp = document(connection, id.id_file);
+                if (tmp.statusOK() )
+                    end.add(tmp.value());
             }
-        });
+        }
+
+        String r = "";
+        Result<Score> q = top(end);
+        if (q.statusOK())
+            r = q.value().url;
+        if (r.equals(""))
+            return "No result's";
+        else
+            return r;
     }
 
     /**
@@ -72,33 +68,29 @@ public class Documents {
      * @param query document name to search
      * @return List of Absolute path to document
      */
-    public List<String> list(final String query){
-        return connector.withConnection(new Function<Connection, List<String>>() {
-            public List<String> apply(final Connection connection) {
-                List<String> end = new ArrayList<String>();
-                String[] d = multiQuery(query);
+    public List<String> list(Connection connection, final String query){
+        List<String> end = new ArrayList<String>();
+        String[] d = multiQuery(query);
 
-                for (String word : d) {
-                    List<Score> scores = new ArrayList<Score>();
-                    List<Id> ids = getIds(connection,word);
-                    for (Id id : ids) {
-                        Result<Score> tmp = document(id.id_file);
-                        if (tmp.statusOK() ) {
-                            String url = tmp.value().url;
-                            if (isDocument(url)){
-                                if (!end.contains(url))
-                                    end.add(url);
-                            }
-                        }
+        for (String word : d) {
+            List<Score> scores = new ArrayList<Score>();
+            List<Id> ids = getIds(connection,word);
+            for (Id id : ids) {
+                Result<Score> tmp = document(connection, id.id_file);
+                if (tmp.statusOK() ) {
+                    String url = tmp.value().url;
+                    if (isDocument(url)){
+                        if (!end.contains(url))
+                            end.add(url);
                     }
                 }
-
-
-                if (!(end.size() > 0))
-                    end.add("No result's");
-                return end;
             }
-        });
+        }
+
+
+        if (!(end.size() > 0))
+            end.add("No result's");
+        return end;
     }
 
 
@@ -110,48 +102,44 @@ public class Documents {
      * @return List of Absolute path to document
      */
 
-    public List<String> list(final String query, final Integer size){
-        return connector.withConnection(new Function<Connection, List<String>>() {
-            public List<String> apply(final Connection connection) {
-                List<Score> big = new ArrayList<Score>();
-                List<String> end = new ArrayList<String>();
-                String[] d = multiQuery(query);
+    public List<String> list(Connection connection, final String query, final Integer size){
+        List<Score> big = new ArrayList<Score>();
+        List<String> end = new ArrayList<String>();
+        String[] d = multiQuery(query);
 
-                for (String word : d) {
-                    List<Score> scores = new ArrayList<Score>();
+        for (String word : d) {
+            List<Score> scores = new ArrayList<Score>();
 
-                    List<Id> ids = getIds(connection,word);
+            List<Id> ids = getIds(connection,word);
 
-                    for (Id id : ids) {
-                        Result<Score> tmp = document(id.id_file);
-                        if (tmp.statusOK() )  {
-                            if (isDocument(tmp.value().url)){
-                                if (!scores.contains(tmp.value()))
-                                    scores.add(tmp.value());
-                            }
-                        }
-                    }
-                    big.addAll(scores);
-                }
-
-                if (!(big.size() > 0))
-                    end.add("No result's");
-                if (big.size() <= size){
-                    for (Score score : big) {
-                        end.add(score.url);
-                    }
-                } else if (big.size() > size){
-                    for (int i = 0; i < size; i++){
-                        Result<Score> r = top(big);
-                        if (r.statusOK()){
-                            end.add(r.value().url);
-                            big.remove(r.value());
-                        }
+            for (Id id : ids) {
+                Result<Score> tmp = document(connection, id.id_file);
+                if (tmp.statusOK() )  {
+                    if (isDocument(tmp.value().url)){
+                        if (!scores.contains(tmp.value()))
+                            scores.add(tmp.value());
                     }
                 }
-                return end;
             }
-        });
+            big.addAll(scores);
+        }
+
+        if (!(big.size() > 0))
+            end.add("No result's");
+        if (big.size() <= size){
+            for (Score score : big) {
+                end.add(score.url);
+            }
+        } else if (big.size() > size){
+            for (int i = 0; i < size; i++){
+                Result<Score> r = top(big);
+                if (r.statusOK()){
+                    end.add(r.value().url);
+                    big.remove(r.value());
+                }
+            }
+        }
+        return end;
     }
 
 
@@ -183,14 +171,10 @@ public class Documents {
      * @param file File ID
      * @return Result of Score
      */
-    private Result<Score> document(final Integer file){
-        return connector.withConnection(new Function<Connection, Result<Score>>() {
-            public Result<Score> apply(final Connection connection) {
-                if ((rankDb.exists(connection, file) == Status.BAD_REQUEST) && (fileDb.exists(connection, file) == Status.BAD_REQUEST)){
-                    return Result.ok(new Score(file, fileDb.get(connection, file).url, rankDb.getScore(connection, file)));
-                }
-                return Result.notfound();
-            }
-        });
+    private Result<Score> document(Connection connection, final Integer file){
+        if ((rankDb.exists(connection, file) == Status.BAD_REQUEST) && (fileDb.exists(connection, file) == Status.BAD_REQUEST)){
+            return Result.ok(new Score(file, fileDb.get(connection, file).url, rankDb.getScore(connection, file)));
+        }
+        return Result.notfound();
     }
 }
