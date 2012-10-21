@@ -34,7 +34,7 @@ public class Links implements Runnable {
 
                     for (Documents doc : docs) {
                         if (fileDb.exists(connection,doc.url) == Status.OK)
-                            System.out.println("file outside original search param."); //todo
+                            System.err.println("Symbolic link to file outside original search paramaters.");
                         else {
                             Documents dbdoc = fileDb.get(connection, doc.url);
                             doc.id = dbdoc.id;

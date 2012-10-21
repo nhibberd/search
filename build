@@ -13,7 +13,7 @@ cp src/bin/* $image/bin
 for x in  $image/bin/*; do
   dos2unix $x
 done
-cp config.properties $image/config.properties.template
+cp config.properties $image/config.properties
 chmod +x $image/bin/*
 cp README $image
 tar cfz gen/dist/search.tar.gz -C gen/image .

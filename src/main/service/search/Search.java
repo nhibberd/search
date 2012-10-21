@@ -53,12 +53,12 @@ public class Search {
         final Applications appQuery = new Applications();
         final Documents docQuery = new Documents();
 
+        ConfigSetup.set(new File("config.properties"));
         //db setup
         new VersionOne().setup();
         new Schema().apply();
 
         //program arguments
-        ConfigSetup.set(new File("config.properties"));
         if (args.length > 0){
             connector.withConnection(new Action<Connection>() {
                 public void apply(final Connection connection) {
