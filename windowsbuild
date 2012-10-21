@@ -11,7 +11,7 @@ jar cvf gen/dist/search.jar -C gen/classes .
 cp lib/run/* gen/dist/search.jar $image/lib
 cp src/bin/* $image/bin
 for x in  $image/bin/*; do
-  fromdos $x
+  dos2unix $x
 done
 chmod +x $image/bin/*
 cp config.properties $image/bin/config.properties
@@ -21,7 +21,3 @@ tar cfz gen/dist/search.tar.gz -C gen/image .
 
 echo search-$version
 
-
-for x in  $image/bin/*; do
-  dos2unix $x
-done
