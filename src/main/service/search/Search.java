@@ -78,7 +78,6 @@ public class Search {
                     } else {
                         String r = filesQuery.top(connection, args[0]);
                         System.out.println(args[0] + " : " + r);
-
                     }
                 }
             });
