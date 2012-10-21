@@ -30,7 +30,7 @@ Options:
 - -dn to return a list of documents with n length
 - -xn to return a list of documents with n length
 
-### Search Usage
+### bin/search usage
 ```
 search term    -- search for any files matching term, return top result
 search -x term -- search for any files matching term that are executable
