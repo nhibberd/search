@@ -148,10 +148,8 @@ public class Documents {
         for (Score data : input) {
             if (isDocument(data.url)){
                 if (data.score > highrank){
-
                     re = data;
                     highrank = data.score;
-
                 }
             }
         }

@@ -43,8 +43,13 @@ public class Applications {
             List<Id> ids = getIds(connection,word);
             for (Id id : ids) {
                 Result<Score> tmp = application(connection, id.id_file);
-                if (tmp.statusOK() )
-                    end.add(tmp.value());
+                if (tmp.statusOK() ) {
+                    Score r = tmp.value();
+                    if (isApplication(fileDb.get(connection, id.id_file).permissions)){
+                        if (!end.contains(r))
+                            end.add(r);
+                    }
+                }
             }
         }
 
@@ -148,13 +153,11 @@ public class Applications {
         Score re = null;
         Integer highrank = -1;
         for (Score data : input) {
-            if (isApp(data.id_file) == Status.OK){
-                if (data.score > highrank){
+            if (data.score > highrank){
 
-                    re = data;
-                    highrank = data.score;
+                re = data;
+                highrank = data.score;
 
-                }
             }
             if (data.score > highrank){
                 re = data;
@@ -165,14 +168,6 @@ public class Applications {
         if (highrank>-1)
             return Result.ok(re);
         return Result.notfound();
-    }
-
-    private Status isApp(final Integer id){
-        return connector.withConnection(new Function<Connection, Status>() {
-            public Status apply(final Connection connection) {
-                return (isApplication(fileDb.get(connection, id).permissions)) ? Status.OK : Status.BAD_REQUEST;
-            }
-        });
     }
 
     /**
