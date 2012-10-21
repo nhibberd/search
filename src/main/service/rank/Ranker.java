@@ -4,7 +4,6 @@ import main.data.core.Action;
 import main.data.core.Status;
 import main.data.file.Documents;
 import main.data.file.State;
-import main.data.rank.Change;
 import main.data.rank.Score;
 import main.service.file.FileDb;
 import main.service.file.StateDb;
@@ -13,9 +12,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static main.data.state.Params.records;
+import static main.service.rank.RankFunctions.isApplication;
+import static main.service.rank.RankFunctions.isDocument;
 import static main.tool.Database.connector;
-import static main.service.rank.RankFunctions.*;
 
 public class Ranker {
 

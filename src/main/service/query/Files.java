@@ -1,6 +1,5 @@
 package main.service.query;
 
-import main.data.core.Function;
 import main.data.core.Result;
 import main.data.core.Status;
 import main.data.index.Id;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static main.service.query.Index.getIds;
-import static main.tool.Database.connector;
 
 public class Files {
     private FileDb fileDb = new FileDb();

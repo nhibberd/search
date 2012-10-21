@@ -14,7 +14,6 @@ import java.util.List;
 
 import static main.service.query.Index.getIds;
 import static main.service.rank.RankFunctions.isApplication;
-import static main.service.rank.RankFunctions.isDocument;
 import static main.tool.Database.connector;
 
 public class Applications {

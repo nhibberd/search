@@ -2,7 +2,6 @@ package main.service.rank;
 
 import main.data.core.Function;
 import main.data.core.Status;
-import main.data.index.Word;
 import main.data.rank.Score;
 import main.db.EdgePreparedStatement;
 import main.db.EdgeResultSet;

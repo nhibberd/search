@@ -10,9 +10,6 @@ javac -source 1.7 -target 1.7 -classpath "$classpath" -d gen/classes @gen/main.l
 jar cvf gen/dist/search.jar -C gen/classes .
 cp lib/run/* gen/dist/search.jar $image/lib
 cp src/bin/* $image/bin
-for x in  $image/bin/*; do
-  dos2unix $x
-done
 cp config.properties $image/config.properties
 chmod +x $image/bin/*
 cp README $image

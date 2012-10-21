@@ -1,24 +1,18 @@
 package main.service.query;
 
-import main.data.core.Function;
 import main.data.core.Result;
 import main.data.core.Status;
 import main.data.index.Id;
 import main.data.rank.Score;
 import main.service.file.FileDb;
-import main.service.file.StateDb;
-import main.service.index.IndexDb;
 import main.service.rank.RankDb;
-import sun.net.idn.StringPrep;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static main.tool.Database.connector;
-import static main.service.query.Index.*;
-import static main.service.rank.RankFunctions.*;
+import static main.service.query.Index.getIds;
+import static main.service.rank.RankFunctions.isDocument;
 
 public class Documents {
     private FileDb fileDb = new FileDb();

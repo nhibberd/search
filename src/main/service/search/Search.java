@@ -4,25 +4,14 @@ import main.config.ConfigSetup;
 import main.config.Schema;
 import main.config.database.VersionOne;
 import main.data.core.Action;
-import main.data.core.Function;
-import main.data.core.Result;
-import main.data.index.Id;
-import main.data.rank.Score;
-import main.schedule.background.Threads;
-import main.schedule.jobs.Crawler;
-import main.schedule.jobs.Links;
 import main.service.query.Applications;
 import main.service.query.Documents;
 import main.service.query.Files;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 
-import static main.data.state.Params.records;
-import static main.service.query.Index.getIds;
-import static main.service.rank.RankFunctions.isApplication;
 import static main.tool.Database.connector;
 
 public class Search {
