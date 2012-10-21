@@ -13,7 +13,12 @@ To initialise the crawler, indexer, ranker
     bin/start <config> <directory> <polling rate>
     bin/start config.properties /home/ 5000
 
+  ```
+    bin/start <config> <directory> <polling rate>
+    bin/start config.properties /home/ 5000
+  ```
 To stop the crawler and using command line to search terms
+
 >   bin/stop
 >   bin/search <OPTION> <TERM>
 
