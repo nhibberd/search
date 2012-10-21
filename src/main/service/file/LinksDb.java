@@ -102,7 +102,4 @@ public class LinksDb {
             }
         });
     }
-
-    //todo update
-
 }

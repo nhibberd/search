@@ -20,8 +20,6 @@ public class VersionOne {
     public Boolean setup(){
         final String createuser = "CREATE USER admin PASSWORD search";
 
-
-        //todo changes
         final String schema = "CREATE SCHEMA search AUTHORIZATION admin\n" +
                 "CREATE TABLE IF NOT EXISTS rank ( id_file INTEGER PRIMARY KEY, url VARCHAR(255), score INTEGER )\n" +
                 "CREATE TABLE IF NOT EXISTS index ( word VARCHAR(255) PRIMARY KEY, id_file_count VARCHAR(10000) )\n" +

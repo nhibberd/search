@@ -39,18 +39,14 @@ public class Indexer {
 
     private void add(Connection connection, Names name) {
         String[] split = name.name.split(regex);
-        if (split.length == 1)
-            check(connection,name.name,1,name.id_file);
-        else {
-            for (String s : split) {
-                Integer count = 0;
-                if (!s.equals("")){
-                    for (String word1 : split) {
-                        if (s.equals(word1))
-                            count+=1;
-                    }
-                    check(connection,s,count,name.id_file);
+        for (String s : split) {
+            Integer count = 0;
+            if (!s.equals("")){
+                for (String word1 : split) {
+                    if (s.equals(word1))
+                        count+=1;
                 }
+                check(connection,s,count,name.id_file);
             }
         }
     }

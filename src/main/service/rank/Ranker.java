@@ -38,7 +38,6 @@ public class Ranker {
      *  Permissions : 2
      *
      */
-    //todo NOT WORKING...
     public void run() {
         long start = System.currentTimeMillis();
         connector.withConnection(new Action<Connection>() {
