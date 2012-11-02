@@ -15,7 +15,7 @@ for x in  $image/bin/*; do
 done
 chmod +x $image/bin/*
 cp config.properties $image/bin/config.properties
-cp README $image
+cp README.md $image
 tar cfz gen/dist/search.tar.gz -C gen/image .
 #(cd gen/image && zip -q ../../gen/dist/search.zip -r .)
 
